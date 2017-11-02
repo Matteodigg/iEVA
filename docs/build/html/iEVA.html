@@ -1,0 +1,626 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>iEVA arguments &#8212; iEVA 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial and examples" href="example.html" />
+    <link rel="prev" title="Usage" href="Usage.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example.html" title="Tutorial and examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Usage.html" title="Usage"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ieva-arguments">
+<span id="options"></span><h1>iEVA arguments<a class="headerlink" href="#ieva-arguments" title="Permalink to this headline">¶</a></h1>
+<p>A full list of iEVA tool arguments with a short description can be accessed by typing in your command line <code class="xref py py-class docutils literal"><span class="pre">-h</span></code> [- -help] option:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ iEVA -h [--help]
+
+usage: iEVA [-h] [-v] -I path/to/input -Ref path/to/fasta -O path/to/outfile
+            [-L path/to/bamlist] [-WS [20-600]] [-SR]
+            [-SRList path/to/SampleRepeatList.txt] [-SRL] [-SRU] [-PNC] [-RM]
+            [-GC] [-VC] [-SBR] [-UnMap] [-MMQ] [-MQ0] [-NPA] [-SA] [-NP]
+            [-NPP] [-AS] [-TDR] [-iNDR] [-iNDA] [-iDR] [-iDA] [-iDDup] [-TDP]
+            [-SNVmbq [0-66]] [-SNVmmq [0-60]] [-INDELmbq [0-66]]
+            [-INDELmmq [0-60]] [-iDP] [-iAD] [-iRR] [-iRA] [-iQR] [-iQA]
+            [-iRMQ] [-iAMQ] [-iNCR] [-iNCA] [-iCR] [-iCA]
+
+iEVA: identification and Extraction of Variant Attributes.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --verbose         Increase output verbosity. Enable iEVA extraction
+                        progress information
+
+  Required arguments
+
+  -I path/to/input, --input path/to/input
+                        Input file in vcf format.
+  -Ref path/to/fasta, --reference path/to/fasta
+                        Reference file in fasta format.
+  -O path/to/outfile, --outfile path/to/outfile
+                        Output vcf file.
+  -L path/to/bamlist, --list path/to/bamlist
+                        REQUIRED ONLY TO EXTRACT FEATURES FROM BAM FILE. Bam
+                        list file, including path, one for each raw. Sample
+                        name in vcf genotype field has to be the same of Read
+                        Group Sample Name (SM) tag in bam file header. Bam
+                        Index file required in same path of bam file.
+
+  Reference.fasta extraction arguments
+
+  -WS [20-600], --WindowSize [20-600]
+                        Set window size for -SR -SRL -GC and -PNC command.
+                        Default=40, Min=20, Max=600
+  -SR, --SimpleRepeat   Enable Simple Repeat Finder. Check if a variant fall
+                        in a Simple Repeated Sequence. 0 for None, 1 for
+                        Simple Repeat Sequence, 2 for Homopolymer.
+  -SRList path/to/SampleRepeatList.txt, --SimpleRepeatList path/to/SampleRepeatList.txt
+                        path to list containing simple repeated sequence (one
+                        for each raw) to extract with iEVA. If enabled, only
+                        reported sequences in file will be extracted. -SR
+                        option is required.
+  -SRL, --SimpleRepeatLength
+                        Length of repeated sequence (expressed as number of
+                        nucleotides) in -SR option
+  -SRU, --SimpleRepeatUnit
+                        Repeated sequence unit composing simple repeated
+                        sequence
+  -PNC, --PseudoNucleotidesComposition
+                        Describe nucleotide sequence using Pseudo Nucleotide
+                        Composition with Kmer size of 2. Values reported as:
+                        AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT
+  -RM, --RepeatMasker   Check from fasta reference if a variant falls in a
+                        sequence flagged as repeated sequence by RepeatMasker
+                        tool.
+  -GC, --gcContent      Percentage of sequence GC content.
+  -VC, --VariantClass   Annotated variant class: SNV (snv), Insertion (Ins),
+                        Deletion (Del), Sequence Alteration (Alt)
+
+  Bam extraction arguments
+
+  -SBR, --StrandBiasReads
+                        Fisher&#39;s exact test based on read orientation
+                        (R1+,R1-,R2+,R2-) to detect strand bias. Only for
+                        paired-end sequencing experiments.
+  -UnMap, --UnMappedReads
+                        Fraction of unmapped reads for variant position.
+  -MMQ, --MeanMappingQuality
+                        Mean mapping quality for reads mapping variant
+                        position
+  -MQ0, --MappingQualityZero
+                        Fraction of reads with Mapping Quaility=0.
+  -NPA, --NotPrimaryAlignment
+                        Fraction of reads mapping position flagged as not
+                        primary alignment.
+  -SA, --SupplementaryAlignment
+                        Fraction of reads mapping position flagged as
+                        supplementary alignment.
+  -NP, --NotPairedReads
+                        Fraction of reads mapping position flagged as not
+                        paired.
+  -NPP, --NotProperPairedReads
+                        Fraction of reads mapping position flagged as not
+                        proper paired.
+  -AS, --AlignmentScore
+                        Mean Alignment Score of reads mapping position.
+  -TDR, --TotalDupReads
+                        Fraction of total reads mapping position marked as
+                        duplicate.
+
+  Genotype extraction arguments
+
+  -iNDR, --NumberReadDupRef
+                        Number of reads mapping position marked as duplicate
+                        on REF allele.
+  -iNDA, --NumberReadDupAlt
+                        Number of reads mapping position marked as duplicate
+                        on ALT allele.
+  -iDR, --DuplicateReference
+                        Fraction of reads mapping position marked as duplicate
+                        on REF allele.
+  -iDA, --DuplicateAlternate
+                        Fraction of reads mapping position marked as duplicate
+                        on ALT allele.
+  -iDDup, --DeltaDuplicate
+                        Difference between fraction duplicate reads in REF and
+                        ALT alleles (REF-ALT). Negative values show preference
+                        in duplicate for REF allele, positive for ALT.
+  -TDP, --TotalDPUnfilter
+                        Total read depth. No filter applied, include duplicate
+                        reads. Look at -iDP option for filtered iDP.
+  -SNVmbq [0-66], --SNVMinBaseQuality [0-66]
+                        Minimum Base Quality threshold for base supporting SNV
+                        position. Used on allele specific annotation.
+                        Default=12
+  -SNVmmq [0-60], --SNVMinMappingQuality [0-60]
+                        Minimum Mapping Quality threshold for reads supporting
+                        SNV position. Used on allele specific annotation.
+                        Default=30
+  -INDELmbq [0-66], --IndelMinBaseQuality [0-66]
+                        Minimum Base Quality threshold for base supporting
+                        InDel position. Used on allele specific annotation.
+                        Default=10
+  -INDELmmq [0-60], --IndelMinMappingQuality [0-60]
+                        Minimum Mapping Quality threshold for reads supporting
+                        InDel position. Used on allele specific annotation.
+                        Default=20
+  -iDP, --iEvaDepth     iEVA read depth for variant position. Only proper
+                        paired, proper mapped and not duplicate reads are
+                        included.
+  -iAD, --iAlleleDepth  iEVA Allele Depth reported as Ref,Alt
+  -iRR, --ReadRef       Number of reads mapping REF allele.
+  -iRA, --ReadAlt       Number of reads mapping ALT allele.
+  -iQR, --MeanRefQscore
+                        Mean Q-score for REF allele.
+  -iQA, --MeanAltQscore
+                        Mean Q-score for ALT allele.
+  -iRMQ, --RefMeanMappingQuality
+                        Mean mapping quality for reads supporting REF allele.
+  -iAMQ, --AltMeanMappingQuality
+                        Mean mapping quality for reads supporting ALT allele.
+  -iNCR, --NumberClippedReadsRef
+                        Number of clipped reads mapping REF allele.
+  -iNCA, --NumberClippedReadsAlt
+                        Number of clipped reads mapping ALT allele.
+  -iCR, --ClippedReadsRef
+                        Fraction of clipped reads mapping REF allele.
+  -iCA, --ClippedReadsAlt
+                        Fraction of clipped reads mapping ALT allele.
+</pre></div>
+</div>
+<div class="section" id="required-arguments">
+<span id="required"></span><h2>Required arguments<a class="headerlink" href="#required-arguments" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first"><strong>-I, –input</strong></p>
+<blockquote>
+<div><p>Path to input vcf file</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>-Ref, –reference</strong></p>
+<blockquote>
+<div><p>Path to reference file in fasta format</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>-O, –outfile</strong></p>
+<blockquote>
+<div><p>Path to output vcf file</p>
+</div></blockquote>
+</li>
+<li><p class="first"><strong>-L, –list</strong></p>
+<blockquote>
+<div><p><em>REQUIRED ONLY TO EXTRACT ATTRIBUTES FROM BAM FILE.</em></p>
+<div class="line-block">
+<div class="line">Path to Bam list file, one file for each raw, as explained in <a class="reference internal" href="Usage.html#how-to"><span class="std std-ref">Usage</span></a>.</div>
+<div class="line">Sample name in vcf <em>genotype</em> field has to be the same of Read Group Sample Name <code class="xref py py-class docutils literal"><span class="pre">RG:SM</span></code> tag in bam file header. Bam Index file required in the same path of bam file.</div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+</div>
+<div class="section" id="reference-extraction-arguments">
+<h2>Reference extraction arguments<a class="headerlink" href="#reference-extraction-arguments" title="Permalink to this headline">¶</a></h2>
+<p>Attributes extracted from <code class="file docutils literal"><span class="pre">reference.fasta</span></code> file will be reported in vcf <em>INFO</em> column.</p>
+<div class="section" id="sr-simplerepeat">
+<span id="simplerepeat"></span><h3>-SR, –SimpleRepeat<a class="headerlink" href="#sr-simplerepeat" title="Permalink to this headline">¶</a></h3>
+<p>Enable <em>Simple Repeat Finder</em>. <code class="xref py py-class docutils literal"><span class="pre">-SR</span></code> option checks if a variant in <em>POS</em> field of input vcf file falls into a repeated sequence for a specific <a class="reference internal" href="#ws"><span class="std std-ref">window size</span></a>.</p>
+<p>iEVA is able to identify two class of repetitions:</p>
+<ol class="arabic simple">
+<li><strong>Simple Repeat Sequence</strong>: in -SR we defined 3 simple rules, <strong>BY DEFAULT</strong>, in order to identify a tandem simple repeated sequence:</li>
+</ol>
+<ul class="simple">
+<li><em>Number of repetitions</em> (N) &gt;= 3.  <em>e.g</em> 3(CG) = CGCGCG</li>
+<li><em>Nucleotides composing repeating unit</em> (dY) = 2. For example, given a number of repetitions N=3, 3(ATT) is a SR sequence. 3(AATC), instead, is not a SR sequence because of 3 different nucleotides composing repeating unit.</li>
+<li><em>Max length of repeating unit</em> (L) = 6. By default, -SR option extracts only repeated sequences with L=6. For example, N(ATTAATT) is not considered a SR sequence</li>
+</ul>
+<p>We selected these rules by default with <code class="xref py py-class docutils literal"><span class="pre">-SR</span></code> option in iEVA because these repeated sequences mostly influence base-calling and sequencing quality metrics <a class="footnote-reference" href="#id3" id="id1">[1]</a>. However, if you need to find more complex repetitions (or implementing your own rules for repeated sequences) look at <a class="reference internal" href="#srlist"><span class="std std-ref">-SRList, –SimpleRepeatList</span></a> option.</p>
+<ol class="arabic simple" start="2">
+<li><strong>Homopolymer Sequence</strong>: it is defined as:</li>
+</ol>
+<ul class="simple">
+<li><em>Number of repetitions</em> (N) &gt; 3</li>
+<li><em>Number of nucleotides composing single repeated sequence unit</em> (dY) = 1.  <em>e.g</em> 4(A)</li>
+</ul>
+<p>For example, <cite>GAGAGAGA</cite> is a Repeated Sequence of a <cite>GA</cite> dinucleotide with N = 4.
+Instead, <cite>AAAAAAA</cite> is an Homopolymer of <cite>A</cite> nucleotide with N = 7.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p><code class="xref py py-class docutils literal"><span class="pre">-SR</span></code> argument has three output values: <code class="xref py py-class docutils literal"><span class="pre">SR=0</span></code> for None, <code class="xref py py-class docutils literal"><span class="pre">SR=1</span></code> for Repeated Sequence and <code class="xref py py-class docutils literal"><span class="pre">SR=2</span></code> for Homopolymer Sequence.</p>
+<p>iEVA does not extract all repeated sequence in window size but only verify if a variant falls into it: only in this case, iEVA report repeated sequence class, otherwise SR=0.</p>
+<p class="last">A complete list of Simple Repeat Sequence extracted by iEVA can be found in iEVA package at <code class="file docutils literal"><span class="pre">./iEVA/Supplementary/Simple-Repeated-Sequence-list.txt</span></code></p>
+</div>
+</div>
+<div class="section" id="srlist-simplerepeatlist">
+<span id="srlist"></span><h3>-SRList, –SimpleRepeatList<a class="headerlink" href="#srlist-simplerepeatlist" title="Permalink to this headline">¶</a></h3>
+<p>Path to list containing simple repeated sequence (one for each raw) to extract with iEVA. Enabling <code class="xref py py-class docutils literal"><span class="pre">-SRList</span></code> command, you ask to iEVA to check if a variant falls in a repeated sequence reported in list, neglecting previously explained rules for simple repeated sequences in <a class="reference internal" href="#simplerepeat"><span class="std std-ref">-SR, –SimpleRepeat</span></a> option.</p>
+<p>User can choose to find any type of repeated sequence only if provides single repeating unit in file. Compared to <a class="reference internal" href="#simplerepeat"><span class="std std-ref">-SR, –SimpleRepeat</span></a> option, you can define your own rules, using also sequences composed by more than two nucleotides (dY &gt;= 2) and with a max length of repeating unit greater than 6 (L &gt;= 6). For example, try to create a <code class="file docutils literal"><span class="pre">RepSeq.txt</span></code> file as follow:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">CTT</span>
+<span class="n">ACG</span>
+<span class="n">ACCTG</span>
+</pre></div>
+</div>
+<p>In this case, iEVA finds all repeated sequences with number of repetitions &gt; 3 like <em>CTTCTTCTTCTTCTT</em>, <em>ACGACGACGACG</em> or <em>ACCTGACCTGACCTG</em></p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Using <code class="xref py py-class docutils literal"><span class="pre">-SRList</span></code> command iEVA will not extract the default repetitions reported in <code class="file docutils literal"><span class="pre">./iEVA/Supplementary/Simple-Repeated-Sequence-list.txt</span></code> file but only those given in file list. However, iEVA always finds homopolymer sequences.
+If you want to extract also default repetitions, you can add your repeating unit of interest in that file and use it to extract all requested repeated sequences.</p>
+</div>
+</div>
+<div class="section" id="srl-simplerepeatlength">
+<h3>-SRL, –SimpleRepeatLength<a class="headerlink" href="#srl-simplerepeatlength" title="Permalink to this headline">¶</a></h3>
+<p>Total length, as number of nucleotides, of repeated sequence in <code class="xref py py-class docutils literal"><span class="pre">SR</span></code> option in which variant falls.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><cite>GAGAGAGA</cite>, for example, has <code class="xref py py-class docutils literal"><span class="pre">SRL=8</span></code>.</p>
+</div>
+</div>
+<div class="section" id="sru-simplerepeatunit">
+<span id="pseudonucleotidescomposition"></span><h3>-SRU, –SimpleRepeatUnit<a class="headerlink" href="#sru-simplerepeatunit" title="Permalink to this headline">¶</a></h3>
+<p>Report simple repeat unit composing simple repeated sequence. For axample, <cite>ATTATTATT</cite> has a saimple repeat unit <code class="xref py py-class docutils literal"><span class="pre">SRU=ATT</span></code>.</p>
+</div>
+<div class="section" id="pnc-pseudonucleotidescomposition">
+<h3>-PNC, –PseudoNucleotidesComposition<a class="headerlink" href="#pnc-pseudonucleotidescomposition" title="Permalink to this headline">¶</a></h3>
+<p>In order to achieve an accurate description of a sequence around a variant in vcf input file, we implemented in iEVA a <em>Pseudo nucleotide composition or PseKNC</em> for a specific <a class="reference internal" href="#ws"><span class="std std-ref">window size</span></a>.</p>
+<p>PseKNC allows to enclose nucleotide sequence composition using a number of attributes depending on kmer size.
+In iEVA we choosed a dinucleotide profile (kmer size of 2), resulting in 16 attributes: <em>AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT</em>. Each dinucleotide combination is represented by a float number.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Further details about Pseudo nucleotide composition at <a class="footnote-reference" href="#id4" id="id2">[2]</a>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="xref py py-class docutils literal"><span class="pre">-PNC</span></code> is reported in vcf as a list of 16 values: <code class="xref py py-class docutils literal"><span class="pre">PNC=AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT</span></code>.</p>
+</div>
+</div>
+<div class="section" id="rm-repeatmasker">
+<h3>-RM, –RepeatMasker<a class="headerlink" href="#rm-repeatmasker" title="Permalink to this headline">¶</a></h3>
+<p>Check if variant falls in a lower case sequence on <code class="file docutils literal"><span class="pre">reference.fasta</span></code> file for a specific <a class="reference internal" href="#ws"><span class="std std-ref">window size</span></a>.</p>
+<p>Sequence in lower case is used for sequences identified by <a class="reference external" href="http://www.repeatmasker.org/">RepeatMasker</a> as low-complexity or repetitive elements as reported in <a class="reference external" href="https://www.ncbi.nlm.nih.gov/projects/SNP/snp_legend.cgi?legend=fasta">Fasta format specification</a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="xref py py-class docutils literal"><span class="pre">-RM</span></code> argument has two possible values. <code class="xref py py-class docutils literal"><span class="pre">RM=0</span></code> if fasta sequence is upper case, <code class="xref py py-class docutils literal"><span class="pre">RM=1</span></code> if fasta sequence is lower case.</p>
+</div>
+</div>
+<div class="section" id="gc-gccontent">
+<span id="gccontent"></span><h3>-GC, –gcContent<a class="headerlink" href="#gc-gccontent" title="Permalink to this headline">¶</a></h3>
+<p>GC content of a sequence for a specific <a class="reference external" href="WS">window size</a>.</p>
+</div>
+<div class="section" id="vc-variantclass">
+<span id="vc"></span><h3>-VC, –VariantClass<a class="headerlink" href="#vc-variantclass" title="Permalink to this headline">¶</a></h3>
+<p>Verify if variant class is <em>SNV</em>, <em>Insertion</em> or <em>Deletion</em>. Other variant classes (<em>e.g</em> InDel) are reported as <em>Sequence Alteration</em>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="xref py py-class docutils literal"><span class="pre">-VC</span></code> argument has 4 possible values. <code class="xref py py-class docutils literal"><span class="pre">VC=snv</span></code> for <em>SNV</em>, <code class="xref py py-class docutils literal"><span class="pre">VC=Ins</span></code> for <em>Insertion</em>, <code class="xref py py-class docutils literal"><span class="pre">VC=Del</span></code> for <em>Deletion</em> and <code class="xref py py-class docutils literal"><span class="pre">VC=Alt</span></code> for <em>Sequence Alteration</em></p>
+</div>
+</div>
+<div class="section" id="ws-windowsize">
+<span id="ws"></span><h3>-WS, –WindowSize<a class="headerlink" href="#ws-windowsize" title="Permalink to this headline">¶</a></h3>
+<p>Set window size for <a class="reference internal" href="#simplerepeat"><span class="std std-ref">-SR</span></a> and <a class="reference internal" href="#srlist"><span class="std std-ref">-SRList</span></a>, <a class="reference internal" href="#gccontent"><span class="std std-ref">-GC</span></a> and <a class="reference internal" href="#pseudonucleotidescomposition"><span class="std std-ref">-PNC</span></a> arguments. <em>WS=[20-600]</em>, <em>Default=40</em></p>
+</div>
+</div>
+<div class="section" id="bam-extraction-arguments">
+<span id="genotype"></span><h2>Bam extraction arguments<a class="headerlink" href="#bam-extraction-arguments" title="Permalink to this headline">¶</a></h2>
+<p>These arguments extract several information about reads mapping sample variant position. Attributes are extracted from flag field in <code class="file docutils literal"><span class="pre">.bam</span></code> file and will be annotated in vcf genotype field for bam reported in <a class="reference internal" href="#required"><span class="std std-ref">-L</span></a> option.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last">Look at <a class="reference external" href="https://samtools.github.io/hts-specs/SAMv1.pdf">bam specifications</a> for details about bam format.</p>
+</div>
+<div class="section" id="sbr-strandbiasreads">
+<h3>-SBR, –StrandBiasReads<a class="headerlink" href="#sbr-strandbiasreads" title="Permalink to this headline">¶</a></h3>
+<p>Fisher’s exact test based on read orientation (R1+,R1-,R2+,R2-) to detect strand bias. Only for paired-end sequencing experiments.
+This option excludes reads flagged as duplicates and unmapped.</p>
+</div>
+<div class="section" id="unmap-unmappedreads">
+<h3>-UnMap, –UnMappedReads<a class="headerlink" href="#unmap-unmappedreads" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of <em>unmapped reads</em> for a variant position.</p>
+</div>
+<div class="section" id="mmq-meanmappingquality">
+<h3>-MMQ, –MeanMappingQuality<a class="headerlink" href="#mmq-meanmappingquality" title="Permalink to this headline">¶</a></h3>
+<p>Mean mapping quality for reads mapping variant position.</p>
+</div>
+<div class="section" id="mq0-mappingqualityzero">
+<h3>-MQ0, –MappingQualityZero<a class="headerlink" href="#mq0-mappingqualityzero" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position with Mapping Quaility <em>MQ=0</em>.</p>
+</div>
+<div class="section" id="npa-notprimaryalignment">
+<h3>-NPA, –NotPrimaryAlignment<a class="headerlink" href="#npa-notprimaryalignment" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position and flagged as <em>not primary alignment</em>.</p>
+</div>
+<div class="section" id="sa-supplementaryalignment">
+<h3>-SA, –SupplementaryAlignment<a class="headerlink" href="#sa-supplementaryalignment" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position and flagged as <em>supplementary alignment</em>.</p>
+</div>
+<div class="section" id="np-notpairedreads">
+<h3>-NP, –NotPairedReads<a class="headerlink" href="#np-notpairedreads" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position and flagged as <em>not paired</em>.</p>
+</div>
+<div class="section" id="npp-notproperpairedreads">
+<h3>-NPP, –NotProperPairedReads<a class="headerlink" href="#npp-notproperpairedreads" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position and flagged as <em>not proper paired</em>.</p>
+</div>
+<div class="section" id="as-alignmentscore">
+<h3>-AS, –AlignmentScore<a class="headerlink" href="#as-alignmentscore" title="Permalink to this headline">¶</a></h3>
+<p>Mean <em>Alignment Score</em> for reads mapping variant position. Tested on bam obtained with <a class="reference external" href="http://bio-bwa.sourceforge.net/">BWA</a></p>
+</div>
+<div class="section" id="tdr-totaldupreads">
+<h3>-TDR, –TotalDupReads<a class="headerlink" href="#tdr-totaldupreads" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of total reads mapping variant position and marked as <em>duplicate</em>.</p>
+</div>
+</div>
+<div class="section" id="genotype-extraction-arguments">
+<h2>Genotype extraction arguments<a class="headerlink" href="#genotype-extraction-arguments" title="Permalink to this headline">¶</a></h2>
+<p>Genotype extraction arguments allow to extract information about sample genotype analyzing <code class="file docutils literal"><span class="pre">.bam</span></code> file.
+Most of the command line options in this section start with <code class="docutils literal"><span class="pre">-i</span></code> because are computed by iEVA and are affected by <a class="reference internal" href="#snvmbq"><span class="std std-ref">-SNVmbq</span></a>, <a class="reference internal" href="#snvmmq"><span class="std std-ref">-SNVmmq</span></a>, <a class="reference internal" href="#indelmbq"><span class="std std-ref">-INDELmbq</span></a> and <a class="reference internal" href="#indelmmq"><span class="std std-ref">-INDELmmq</span></a> arguments. They set SNV/InDels mapping quality and base quality threshold for all reads supporting variant position. All reads below threshold are filtered.</p>
+<div class="section" id="tdp-totaldpunfilter">
+<h3>-TDP, –TotalDPUnfilter<a class="headerlink" href="#tdp-totaldpunfilter" title="Permalink to this headline">¶</a></h3>
+<p>Total read depth for a variant position. No filter applied, including duplicate reads. Look at <code class="xref py py-class docutils literal"><span class="pre">-iDP</span></code> option for filtered read depth.</p>
+</div>
+<div class="section" id="snvmbq-snvminbasequality">
+<span id="snvmbq"></span><h3>-SNVmbq, –SNVMinBaseQuality<a class="headerlink" href="#snvmbq-snvminbasequality" title="Permalink to this headline">¶</a></h3>
+<p>Minimum base quality threshold for base supporting <em>SNV</em> position.</p>
+<p><em>SNVmbq=[0-66]</em>, <em>Default=12</em></p>
+</div>
+<div class="section" id="snvmmq-snvminmappingquality">
+<span id="snvmmq"></span><h3>-SNVmmq, –SNVMinMappingQuality<a class="headerlink" href="#snvmmq-snvminmappingquality" title="Permalink to this headline">¶</a></h3>
+<p>Minimum mapping quality threshold for reads supporting <em>SNV</em>.</p>
+<p><em>SNVmmq=[0-60]</em>, <em>Default=30</em></p>
+</div>
+<div class="section" id="indelmbq-indelminbasequality">
+<span id="indelmbq"></span><h3>-INDELmbq, –IndelMinBaseQuality<a class="headerlink" href="#indelmbq-indelminbasequality" title="Permalink to this headline">¶</a></h3>
+<p>Minimum base quality threshold for base supporting <em>Insertions</em> and <em>Deletions</em>.</p>
+<p><em>INDELmbq=[0-66]</em>, <em>Default=10</em></p>
+</div>
+<div class="section" id="indelmmq-indelminmappingquality">
+<span id="indelmmq"></span><h3>-INDELmmq, –IndelMinMappingQuality<a class="headerlink" href="#indelmmq-indelminmappingquality" title="Permalink to this headline">¶</a></h3>
+<p>Minimum mapping quality threshold for reads supporting <em>Insertions</em> and <em>Deletions</em>.</p>
+<p><em>INDELmmq=[0-60]</em>, <em>Default=20</em></p>
+</div>
+<div class="section" id="indr-numberreaddupref">
+<span id="ndr"></span><h3>-iNDR, –NumberReadDupRef<a class="headerlink" href="#indr-numberreaddupref" title="Permalink to this headline">¶</a></h3>
+<p>Number of reads mapping variant position and marked as duplicate on REF allele in vcf <em>REF</em> column.</p>
+</div>
+<div class="section" id="inda-numberreaddupalt">
+<span id="nda"></span><h3>-iNDA, –NumberReadDupAlt<a class="headerlink" href="#inda-numberreaddupalt" title="Permalink to this headline">¶</a></h3>
+<p>Number of reads mapping variant position and marked as duplicate on ALT allele in vcf <em>ALT</em> column.</p>
+</div>
+<div class="section" id="dr">
+<span id="idr-duplicatereference"></span><h3>-iDR, –DuplicateReference<a class="headerlink" href="#dr" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position and marked as duplicate on REF allele in vcf <em>REF</em> column.</p>
+</div>
+<div class="section" id="da">
+<span id="ida-duplicatealternate"></span><h3>-iDA, –DuplicateAlternate<a class="headerlink" href="#da" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of reads mapping variant position and marked as duplicate on ALT allele in vcf <em>ALT</em> column.</p>
+</div>
+<div class="section" id="ddup">
+<span id="iddup-deltaduplicate"></span><h3>-iDDup, –DeltaDuplicate<a class="headerlink" href="#ddup" title="Permalink to this headline">¶</a></h3>
+<p>Difference between fraction of duplicate reads for REF and ALT alleles (%REF - %ALT). A negative value shows preference in duplicate for REF allele, positive for ALT.</p>
+</div>
+<div class="section" id="dp">
+<span id="idp-ievadepth"></span><h3>-iDP, –iEvaDepth<a class="headerlink" href="#dp" title="Permalink to this headline">¶</a></h3>
+<p>iEva read depth for variant position counted as reads supporting <em>REF</em> allele + <em>ALT</em> allele. Only reads flagged as <em>proper paired</em>, <em>proper mapped</em> and <em>not duplicate</em> are used to extract <code class="xref py py-class docutils literal"><span class="pre">iDP</span></code>. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="iad-ialleledepth">
+<span id="ad"></span><h3>-iAD, –iAlleleDepth<a class="headerlink" href="#iad-ialleledepth" title="Permalink to this headline">¶</a></h3>
+<p>iEVA allele depth as number of reads supporting <em>REF</em> and <em>ALT</em> allele reported as <code class="xref py py-class docutils literal"><span class="pre">iAD=iRR,iRA</span></code></p>
+</div>
+<div class="section" id="irr-readref">
+<span id="rr"></span><h3>-iRR, –ReadRef<a class="headerlink" href="#irr-readref" title="Permalink to this headline">¶</a></h3>
+<p>Number of reads supporting <em>REF</em> allele. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="ira-readalt">
+<span id="ra"></span><h3>-iRA, –ReadAlt<a class="headerlink" href="#ira-readalt" title="Permalink to this headline">¶</a></h3>
+<p>Number of reads supporting <em>ALT</em> allele. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="iqr-meanrefqscore">
+<span id="qr"></span><h3>-iQR, –MeanRefQscore<a class="headerlink" href="#iqr-meanrefqscore" title="Permalink to this headline">¶</a></h3>
+<p>Mean Q-score for base supporting <em>REF</em> allele. iEVA extracts <code class="xref py py-class docutils literal"><span class="pre">iQR</span></code> for reads supporting ref allele depending on <a class="reference internal" href="#vc"><span class="std std-ref">Variant Class</span></a> attribute as follow:</p>
+<ul class="simple">
+<li><strong>SNV</strong>: Mean Q-score for all bases supporting REF allele</li>
+<li><strong>Insertion</strong>: Mean Q-score for all inserted bases supporting REF allele</li>
+<li><strong>Deletion</strong>: Mean Q-score for the base before and after deletion.</li>
+</ul>
+</div>
+<div class="section" id="iqa-meanaltqscore">
+<span id="qa"></span><h3>-iQA, –MeanAltQscore<a class="headerlink" href="#iqa-meanaltqscore" title="Permalink to this headline">¶</a></h3>
+<p>Mean Q-score for base supporting <em>ALT</em> allele. iEVA extracts <code class="xref py py-class docutils literal"><span class="pre">QA</span></code> for reads supporting alt allele depending on <a class="reference internal" href="#vc"><span class="std std-ref">Variant Class</span></a> attribute as follow:</p>
+<ul class="simple">
+<li><strong>SNV</strong>: Mean Q-score for all bases supporting ALT allele</li>
+<li><strong>Insertion</strong>: Mean Q-score for all inserted bases supporting ALT allele</li>
+<li><strong>Deletion</strong>: Mean Q-score for the base before and after deletion.</li>
+</ul>
+</div>
+<div class="section" id="irmq-refmeanmappingquality">
+<h3>-iRMQ, –RefMeanMappingQuality<a class="headerlink" href="#irmq-refmeanmappingquality" title="Permalink to this headline">¶</a></h3>
+<p>Mean mapping quality for reads supporting <em>REF</em> allele. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="iamq-altmeanmappingquality">
+<h3>-iAMQ, –AltMeanMappingQuality<a class="headerlink" href="#iamq-altmeanmappingquality" title="Permalink to this headline">¶</a></h3>
+<p>Mean mapping quality for reads supporting <em>ALT</em> allele. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="icr-clippedreadsref">
+<span id="cr"></span><h3>-iCR, –ClippedReadsRef<a class="headerlink" href="#icr-clippedreadsref" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of clipped reads mapping <em>REF</em> allele in <a class="reference internal" href="#rr"><span class="std std-ref">-iRR</span></a>. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="ica-clippedreadsalt">
+<span id="ca"></span><h3>-iCA, –ClippedReadsAlt<a class="headerlink" href="#ica-clippedreadsalt" title="Permalink to this headline">¶</a></h3>
+<p>Fraction of clipped reads mapping <em>ALT</em> allele in <a class="reference internal" href="#ra"><span class="std std-ref">-iRA</span></a>. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="incr-numberclippedreadsref">
+<span id="ncr"></span><h3>-iNCR, –NumberClippedReadsRef<a class="headerlink" href="#incr-numberclippedreadsref" title="Permalink to this headline">¶</a></h3>
+<p>Number of clipped reads mapping <em>REF</em> allele in <a class="reference internal" href="#rr"><span class="std std-ref">-iRR</span></a>. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+<div class="section" id="inca-numberclippedreadsalt">
+<span id="nca"></span><h3>-iNCA, –NumberClippedReadsAlt<a class="headerlink" href="#inca-numberclippedreadsalt" title="Permalink to this headline">¶</a></h3>
+<p>Number of clipped reads mapping <em>ALT</em> allele in <a class="reference internal" href="#ra"><span class="std std-ref">-iRA</span></a>. iEVA filters all reads flagged as <em>unmapped</em>, <em>secondary alignment</em>, <em>supplementary alignment</em> or marked as <em>duplicate</em>.</p>
+</div>
+</div>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils footnote" frame="void" id="id3" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Kieleczawa J. Fundamentals of Sequencing of Difficult Templates—An Overview. Journal of Biomolecular Techniques : JBT. 2006;17(3):207-217. <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pubmed/16870712">PubMed PMID: 16870712</a></td></tr>
+</tbody>
+</table>
+<table class="docutils footnote" frame="void" id="id4" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Chen W, Lin H, Chou KC. Pseudo nucleotide composition or PseKNC: an effective formulation for analyzing genomic sequences. Mol Biosyst. 2015 Oct;11(10):2620-34. <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pubmed/26099739">PubMed PMID: 19505943</a></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">iEVA arguments</a><ul>
+<li><a class="reference internal" href="#required-arguments">Required arguments</a></li>
+<li><a class="reference internal" href="#reference-extraction-arguments">Reference extraction arguments</a><ul>
+<li><a class="reference internal" href="#sr-simplerepeat">-SR, –SimpleRepeat</a></li>
+<li><a class="reference internal" href="#srlist-simplerepeatlist">-SRList, –SimpleRepeatList</a></li>
+<li><a class="reference internal" href="#srl-simplerepeatlength">-SRL, –SimpleRepeatLength</a></li>
+<li><a class="reference internal" href="#sru-simplerepeatunit">-SRU, –SimpleRepeatUnit</a></li>
+<li><a class="reference internal" href="#pnc-pseudonucleotidescomposition">-PNC, –PseudoNucleotidesComposition</a></li>
+<li><a class="reference internal" href="#rm-repeatmasker">-RM, –RepeatMasker</a></li>
+<li><a class="reference internal" href="#gc-gccontent">-GC, –gcContent</a></li>
+<li><a class="reference internal" href="#vc-variantclass">-VC, –VariantClass</a></li>
+<li><a class="reference internal" href="#ws-windowsize">-WS, –WindowSize</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#bam-extraction-arguments">Bam extraction arguments</a><ul>
+<li><a class="reference internal" href="#sbr-strandbiasreads">-SBR, –StrandBiasReads</a></li>
+<li><a class="reference internal" href="#unmap-unmappedreads">-UnMap, –UnMappedReads</a></li>
+<li><a class="reference internal" href="#mmq-meanmappingquality">-MMQ, –MeanMappingQuality</a></li>
+<li><a class="reference internal" href="#mq0-mappingqualityzero">-MQ0, –MappingQualityZero</a></li>
+<li><a class="reference internal" href="#npa-notprimaryalignment">-NPA, –NotPrimaryAlignment</a></li>
+<li><a class="reference internal" href="#sa-supplementaryalignment">-SA, –SupplementaryAlignment</a></li>
+<li><a class="reference internal" href="#np-notpairedreads">-NP, –NotPairedReads</a></li>
+<li><a class="reference internal" href="#npp-notproperpairedreads">-NPP, –NotProperPairedReads</a></li>
+<li><a class="reference internal" href="#as-alignmentscore">-AS, –AlignmentScore</a></li>
+<li><a class="reference internal" href="#tdr-totaldupreads">-TDR, –TotalDupReads</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#genotype-extraction-arguments">Genotype extraction arguments</a><ul>
+<li><a class="reference internal" href="#tdp-totaldpunfilter">-TDP, –TotalDPUnfilter</a></li>
+<li><a class="reference internal" href="#snvmbq-snvminbasequality">-SNVmbq, –SNVMinBaseQuality</a></li>
+<li><a class="reference internal" href="#snvmmq-snvminmappingquality">-SNVmmq, –SNVMinMappingQuality</a></li>
+<li><a class="reference internal" href="#indelmbq-indelminbasequality">-INDELmbq, –IndelMinBaseQuality</a></li>
+<li><a class="reference internal" href="#indelmmq-indelminmappingquality">-INDELmmq, –IndelMinMappingQuality</a></li>
+<li><a class="reference internal" href="#indr-numberreaddupref">-iNDR, –NumberReadDupRef</a></li>
+<li><a class="reference internal" href="#inda-numberreaddupalt">-iNDA, –NumberReadDupAlt</a></li>
+<li><a class="reference internal" href="#dr">-iDR, –DuplicateReference</a></li>
+<li><a class="reference internal" href="#da">-iDA, –DuplicateAlternate</a></li>
+<li><a class="reference internal" href="#ddup">-iDDup, –DeltaDuplicate</a></li>
+<li><a class="reference internal" href="#dp">-iDP, –iEvaDepth</a></li>
+<li><a class="reference internal" href="#iad-ialleledepth">-iAD, –iAlleleDepth</a></li>
+<li><a class="reference internal" href="#irr-readref">-iRR, –ReadRef</a></li>
+<li><a class="reference internal" href="#ira-readalt">-iRA, –ReadAlt</a></li>
+<li><a class="reference internal" href="#iqr-meanrefqscore">-iQR, –MeanRefQscore</a></li>
+<li><a class="reference internal" href="#iqa-meanaltqscore">-iQA, –MeanAltQscore</a></li>
+<li><a class="reference internal" href="#irmq-refmeanmappingquality">-iRMQ, –RefMeanMappingQuality</a></li>
+<li><a class="reference internal" href="#iamq-altmeanmappingquality">-iAMQ, –AltMeanMappingQuality</a></li>
+<li><a class="reference internal" href="#icr-clippedreadsref">-iCR, –ClippedReadsRef</a></li>
+<li><a class="reference internal" href="#ica-clippedreadsalt">-iCA, –ClippedReadsAlt</a></li>
+<li><a class="reference internal" href="#incr-numberclippedreadsref">-iNCR, –NumberClippedReadsRef</a></li>
+<li><a class="reference internal" href="#inca-numberclippedreadsalt">-iNCA, –NumberClippedReadsAlt</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Usage.html"
+                        title="previous chapter">Usage</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example.html"
+                        title="next chapter">Tutorial and examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/iEVA.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example.html" title="Tutorial and examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Usage.html" title="Usage"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Matteo Di Giovannantonio.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

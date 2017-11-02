@@ -1,0 +1,25 @@
+FAQ
+===
+
+
+Could iEVA be considered a variant caller?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+iEVA is not a variant caller because iEVA does not include any genotyping algorithm. It simply needs as input a vcf file from variant calling and generates as output a new vcf file enriched with all extracted information.
+
+
+How iEVA extracts genotype informations?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+iEVA extracts genotype attributes like :ref:`-iDP <DP>` or :ref:`-iAD <AD>` by simply taking into account information about variant position, *REF* and *ALT* field for vcf input file. After that, iEVA iterates all reads mapping variant position in bam file, looking for reads carrying REF or ALT allele.
+
+
+Can I use any bam file or reference fasta file with iEVA?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Yes. You can use any bam or reference fasta file used in variant calling analysis.
+
+However, consider that some information can be extracted only if you made the respective analysis on bam file. For example, you cannot extract information about fraction of duplicate reads without marking duplicate step on bam file. In this case, not extracted options will be reported with missing value `'.'` in output vcf file.
+In addition, bam analysis depends on pysam requirements.
+
+

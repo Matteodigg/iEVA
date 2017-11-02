@@ -1,0 +1,9 @@
+argparse
+regex
+numpy
+scipy
+cython
+biopython
+pyfasta>=0.5.2
+repDNA>=1.1.4
+pysam>=0.9.1.4

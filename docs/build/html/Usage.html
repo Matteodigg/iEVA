@@ -1,0 +1,172 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Usage &#8212; iEVA 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="iEVA arguments" href="iEVA.html" />
+    <link rel="prev" title="Installation" href="Install.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="iEVA.html" title="iEVA arguments"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="Install.html" title="Installation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="usage">
+<span id="how-to"></span><h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>iEVA requires three arguments in order to extract attributes from reference.fasta file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ iEVA -I path/to/input.vcf -Ref path/to/reference.fasta -O path/to/out.vcf -[opts]
+</pre></div>
+</div>
+<p>An additional argument is required to extract attributes from bam file:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ iEVA -I path/to/input.vcf -Ref path/to/reference.fasta -L path/to/Bam_list -O path/to/out.vcf -[opts]
+</pre></div>
+</div>
+<p><code class="file docutils literal"><span class="pre">Bam_list</span></code> file contains path to sample/s bam file in <em>–input</em> argument. One for each raw:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">Sample1</span><span class="o">.</span><span class="n">bam</span>
+<span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">Sample2</span><span class="o">.</span><span class="n">bam</span>
+<span class="o">.</span>
+<span class="o">.</span>
+<span class="o">.</span>
+</pre></div>
+</div>
+<p>Index <code class="file docutils literal"><span class="pre">.bai</span></code> is required to be in same path of <code class="file docutils literal"><span class="pre">.bam</span></code> file.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are running for the first time <code class="xref py py-class docutils literal"><span class="pre">pyfasta</span></code> module on <code class="file docutils literal"><span class="pre">reference.fasta</span></code>, it is going to take some time to write index file.</p>
+</div>
+<div class="section" id="prerequisites">
+<span id="prereq"></span><h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<p>For a proper usage, iEVA meets the following prerequisites:</p>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt><strong>Vcf normalization</strong>:</dt>
+<dd><div class="first line-block">
+<div class="line">Actual iEVA release does not extract any allele-specific attribute on multi-allelic sites with multiple values in vcf <em>ALT</em> field.</div>
+<div class="line">In addition, it is considered a good standard to <em>normalize</em> and <em>left-align</em> a vcf file after variant calling. Further details about <em>normalization</em> <a class="reference external" href="http://genome.sph.umich.edu/wiki/Variant_Normalization">here</a>.</div>
+</div>
+<p>You can normalize and split multi-allelic sites in vcf file, before using iEVA, with <a class="reference external" href="https://samtools.github.io/bcftools/bcftools.html">bcftools norm</a> using the following command line option:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ bcftools norm -m -both -f reference.fasta INPUT.vcf &gt; OUTPUT.split-and-norm.vcf
+</pre></div>
+</div>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Bam header and sample name</strong>:</dt>
+<dd><div class="first last line-block">
+<div class="line">To use <em>bam extraction</em>, sample name in vcf <em>genotype</em> field need to be the same of <code class="xref py py-class docutils literal"><span class="pre">RG:SM</span></code> tag in bam file.</div>
+<div class="line">To modify bam header sample name, you can use <a class="reference external" href="https://broadinstitute.github.io/picard/command-line-overview.html#AddOrReplaceReadGroups">Picard tool</a> or <a class="reference external" href="http://www.htslib.org/doc/samtools.html">Samtools</a>.</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">iEVA informs about extraction progress with <code class="xref py py-class docutils literal"><span class="pre">--verbose</span></code> option. To use this argument, you have to <strong>sort</strong> vcf file.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Usage</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="Install.html"
+                        title="previous chapter">Installation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="iEVA.html"
+                        title="next chapter">iEVA arguments</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Usage.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="iEVA.html" title="iEVA arguments"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="Install.html" title="Installation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Matteo Di Giovannantonio.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

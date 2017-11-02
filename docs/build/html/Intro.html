@@ -1,0 +1,132 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &#8212; iEVA 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="Install.html" />
+    <link rel="prev" title="iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Install.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>iEVA is a python command line tool that expands the number of informative attributes that are not commonly provided by variant callers. It needs as input a <code class="docutils literal"><span class="pre">.vcf</span></code> file from variant calling and generates as output a new vcf file enriched with all extracted information.</p>
+<p>iEVA attributes are annotated in <em>INFO</em> and <em>FORMAT</em> field of vcf output file (see <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.2.pdf">https://samtools.github.io/hts-specs/VCFv4.2.pdf</a> for <em>vcf</em> specification). iEVA extracts information for variant in input vcf file from two different sources:</p>
+<ol class="arabic simple">
+<li><strong>Reference.fasta file</strong>. Nucleotide sequence composition around a called variant is extracted from the fasta reference file. The annotations are reported in vcf <em>INFO</em> field.</li>
+<li><strong>BAM file</strong>. Information about reads mapping variant position, for sample in vcf input file, is extracted from bam file. The annotations are reported in vcf <em>FORMAT</em> field.</li>
+</ol>
+<p>iEVA enriches vcf file with several attributes. With iEVA you can:</p>
+<ul class="simple">
+<li>Report the reference sequence quality in terms of G-C content, repeated sequences, pseudo nucleotide composition and more over.</li>
+<li>Report genotype information for samples in vcf file. You can extract, for each sample, useful information like fraction of unmapped reads, not paired reads, duplicate reads, etc…</li>
+<li>Report <em>allele-specific</em> information, by evaluating, for example, number of reads supporting reference or alternate allele given a specific mapping quality or base quality threshold. These attributes help to identify any bias affecting called variants.</li>
+</ul>
+<p>Main advatages of iEVA are:</p>
+<ul class="simple">
+<li>Output file in a vcf format file. iEVA simply adds the extracted attributes, maintaining original tags in input vcf file.</li>
+<li>Extraction is independent of the variant caller used in variant calling analysis. To a proper usage of iEVA look at <a class="reference internal" href="Usage.html#how-to"><span class="std std-ref">Usage</span></a> and <a class="reference internal" href="Usage.html#prereq"><span class="std std-ref">Prerequisites</span></a>.</li>
+<li>iEVA is not a variant caller, for this reason is a safe-time approach. However, its computational time increases depending both on the number of requested sample for extraction, target length and mean target coverage.</li>
+</ul>
+<p>See <a class="reference internal" href="iEVA.html#options"><span class="std std-ref">iEVA arguments</span></a> for details about iEVA options and <a class="reference internal" href="example.html#ex"><span class="std std-ref">Tutorial and examples</span></a> section.</p>
+<p>One of the strengths of iEVA consists in its simplicity of integration in bioinformatics pipeline, as showed in this figure:</p>
+<a class="reference internal image-reference" href="_images/Workflow-iEVA.PNG"><img alt="alternate text" class="align-center" src="_images/Workflow-iEVA.PNG" style="width: 432.0px; height: 624.0px;" /></a>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Install.html"
+                        title="next chapter">Installation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/Intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Install.html" title="Installation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Matteo Di Giovannantonio.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

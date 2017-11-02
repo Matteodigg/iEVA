@@ -1,0 +1,194 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis &#8212; iEVA 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Introduction" href="Intro.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="Intro.html" title="Introduction"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ieva-a-command-line-tool-for-integration-and-exatraction-of-variant-attributes-in-ngs-analysis">
+<h1>iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis<a class="headerlink" href="#ieva-a-command-line-tool-for-integration-and-exatraction-of-variant-attributes-in-ngs-analysis" title="Permalink to this headline">¶</a></h1>
+<table class="docutils field-list" frame="void" id="contact" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Author:</th><td class="field-body">Matteo Di Giovannantonio and Mario Urtis</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Date:</th><td class="field-body">Jul 21, 2017</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Version:</th><td class="field-body">0.1</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Contact:</th><td class="field-body"><a class="reference external" href="mailto:matteodeg&#37;&#52;&#48;gmail&#46;com">matteodeg<span>&#64;</span>gmail<span>&#46;</span>com</a></td>
+</tr>
+</tbody>
+</table>
+<p>iEVA is a python command line tool for integration and extraction of variant attributes. A lot of unused attributes are stored in <em>BAM</em> file and not reported from variant callers during variant calling analysis. iEVA expands the number of informative attributes obtained by parsing a <em>variant call format (.vcf)</em> file with a <em>reference.fasta</em> file and <em>.bam</em> file of sample stored in vcf.</p>
+<p>iEVA works on python 2.7 using <em>pysam</em> and <em>pyfasta</em> modules. The current version has been tested with:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">pysam</span> <span class="mf">0.9</span><span class="o">.</span><span class="mf">1.4</span>
+<span class="n">pyfasta</span> <span class="mf">0.5</span><span class="o">.</span><span class="mi">2</span>
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="Install.html#installation"><span class="std std-ref">Installation notes</span></a> for details.</p>
+<div class="section" id="contents">
+<h2>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Usage.html#prerequisites">Prerequisites</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="iEVA.html">iEVA arguments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="iEVA.html#required-arguments">Required arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iEVA.html#reference-extraction-arguments">Reference extraction arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iEVA.html#bam-extraction-arguments">Bam extraction arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iEVA.html#genotype-extraction-arguments">Genotype extraction arguments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iEVA.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Tutorial and examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example.html#extracting-attributes-from-fasta-reference">Extracting attributes from fasta reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html#extracting-sample-level-informations">Extracting Sample level informations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="FAQ.html">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="FAQ.html#cuold-ieva-be-considered-a-variant-caller">Cuold iEVA be considered a variant caller?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FAQ.html#how-ieva-extracts-genotype-informations">How iEVA extracts genotype informations?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FAQ.html#can-i-use-any-bam-file-or-reference-fasta-file-with-ieva">Can I use any bam file or reference fasta file with iEVA?</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<p>Contents:</p>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+<div class="section" id="references">
+<h2>References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">The python language:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><a class="reference external" href="http://www.python.org">http://www.python.org</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">The pysam homepage:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><a class="reference external" href="http://pysam.readthedocs.io/en/latest/index.html">http://pysam.readthedocs.io/en/latest/index.html</a></td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">The pyfasta homepage:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><a class="reference external" href="http://pypi.python.org/pypi/pyfasta/">http://pypi.python.org/pypi/pyfasta/</a></td>
+</tr>
+</tbody>
+</table>
+<p>For any question or bug, please refer to <a class="reference internal" href="#contact"><span class="std std-ref">contact author</span></a> information.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">iEVA - a command line tool for Integration and Exatraction of Variant Attributes in NGS analysis</a><ul>
+<li><a class="reference internal" href="#contents">Contents:</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a><ul>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="Intro.html"
+                        title="next chapter">Introduction</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="Intro.html" title="Introduction"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Matteo Di Giovannantonio.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>

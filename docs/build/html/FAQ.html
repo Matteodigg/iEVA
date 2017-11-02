@@ -1,0 +1,125 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FAQ &#8212; iEVA 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Tutorial and examples" href="example.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example.html" title="Tutorial and examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="cuold-ieva-be-considered-a-variant-caller">
+<h2>Cuold iEVA be considered a variant caller?<a class="headerlink" href="#cuold-ieva-be-considered-a-variant-caller" title="Permalink to this headline">¶</a></h2>
+<p>iEVA is not a variant caller because iEVA does not include any genotyping algorithm. It simply needs as input a vcf file from variant calling and generates as output a new vcf file enriched with all extracted information.</p>
+</div>
+<div class="section" id="how-ieva-extracts-genotype-informations">
+<h2>How iEVA extracts genotype informations?<a class="headerlink" href="#how-ieva-extracts-genotype-informations" title="Permalink to this headline">¶</a></h2>
+<p>iEVA extracts genotype attributes like <a class="reference internal" href="iEVA.html#dp"><span class="std std-ref">-iDP</span></a> or <a class="reference internal" href="iEVA.html#ad"><span class="std std-ref">-iAD</span></a> by simply taking into account information about variant position, <em>REF</em> and <em>ALT</em> field for vcf input file. After that, iEVA iterates all reads mapping variant position in bam file, looking for reads carrying REF or ALT allele.</p>
+</div>
+<div class="section" id="can-i-use-any-bam-file-or-reference-fasta-file-with-ieva">
+<h2>Can I use any bam file or reference fasta file with iEVA?<a class="headerlink" href="#can-i-use-any-bam-file-or-reference-fasta-file-with-ieva" title="Permalink to this headline">¶</a></h2>
+<p>Yes. You can use any bam or reference fasta file used in variant calling analysis.</p>
+<p>However, consider that some information can be extracted only if you made the respective analysis on bam file. For example, you cannot extract information about fraction of duplicate reads without marking duplicate step on bam file. In this case, not extracted options will be reported with missing value <cite>‘.’</cite> in output vcf file.
+In addition, bam analysis depends on pysam requirements.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">FAQ</a><ul>
+<li><a class="reference internal" href="#cuold-ieva-be-considered-a-variant-caller">Cuold iEVA be considered a variant caller?</a></li>
+<li><a class="reference internal" href="#how-ieva-extracts-genotype-informations">How iEVA extracts genotype informations?</a></li>
+<li><a class="reference internal" href="#can-i-use-any-bam-file-or-reference-fasta-file-with-ieva">Can I use any bam file or reference fasta file with iEVA?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example.html"
+                        title="previous chapter">Tutorial and examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/FAQ.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example.html" title="Tutorial and examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">iEVA 0.1 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, Matteo Di Giovannantonio.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.2.
+    </div>
+  </body>
+</html>
