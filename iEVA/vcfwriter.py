@@ -48,8 +48,8 @@ def iHeader(Header_File, H_CHR, opts):
 		Header_File += ['##FORMAT=<ID=iXS,Number=1,Type=Float,Description="Mean suboptimal alignment score of reads mapping variant position">']
 	if opts.TotalDupReads:
 		Header_File += ['##FORMAT=<ID=iDUP,Number=1,Type=Integer,Description="Fraction of total reads mapping position marked as duplicate">']
-	if opts.TotalDPUnfilter:
-		Header_File += ['##FORMAT=<ID=iTDP,Number=1,Type=Integer,Description="Total read depth. No filter applied">']
+	#if opts.TotalDPUnfilter:
+	#	Header_File += ['##FORMAT=<ID=iTDP,Number=1,Type=Integer,Description="Total read depth. No filter applied">']
 	if opts.iEvaDepth:
 		Header_File += ['##FORMAT=<ID=iDP,Number=1,Type=Integer,Description="iEVA read depth. Duplicate reads are excluded.">']
 	if opts.AlleleDepth:
@@ -58,10 +58,10 @@ def iHeader(Header_File, H_CHR, opts):
 		Header_File += ['##FORMAT=<ID=iSBD,Number=4,Type=Integer,Description="Depth of bases supporting REF and ALT allele on forward and reverse strand for strand bias detection (R+, R-, A+, A-)">']
 	if opts.StrandBias:
 		Header_File += ['##FORMAT=<ID=iSB,Number=1,Type=Float,Description="Fisher exact test to detect strand bias (R+,R-,A+,A-)">']
-	if opts.AlleleDuplicateDepth:
-		Header_File += ['##FORMAT=<ID=iADup,Number=R,Type=Integer,Description="iEVA Allele Depth of read marked as duplicate. Reported as NumberDupRef, NumberDupAlt">']
-	if opts.DeltaDuplicate:
-		Header_File += ['##FORMAT=<ID=iDDup,Number=1,Type=Float,Description="Difference between fraction of duplicate reads for REF and ALT alleles (DupREF-DupALT) for Het variants">']
+	#if opts.AlleleDuplicateDepth:
+	#	Header_File += ['##FORMAT=<ID=iADup,Number=R,Type=Integer,Description="iEVA Allele Depth of read marked as duplicate. Reported as NumberDupRef, NumberDupAlt">']
+	#if opts.DeltaDuplicate:
+	#	Header_File += ['##FORMAT=<ID=iDDup,Number=1,Type=Float,Description="Difference between fraction of duplicate reads for REF and ALT alleles (DupREF-DupALT) for Het variants">']
 	if opts.AlleleQscore:
 		Header_File += ['##FORMAT=<ID=iQual,Number=R,Type=Float,Description="Mean Q-score for REF and ALT allele reported as MeanRefQscore, MeanAltQscore">']
 	if opts.AlleleMeanMappingQuality:
@@ -72,18 +72,18 @@ def iHeader(Header_File, H_CHR, opts):
 		Header_File += ['##FORMAT=<ID=iAXS,Number=R,Type=Float,Description="Mean suboptimal alignment score for reads supporting REF and ALT allele. Reported as MeanSuboptimalAlignmentScoreRef,MeanSuboptimalAlignmentScoreAlt">']
 	if opts.AlleleSuboptimalAlignmentScoreZero:
 		Header_File += ['##FORMAT=<ID=iAXS0,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele with Suboptimal Alignment Score = 0. Reported as NumberReadsXSscore0Ref,NumberReadsXSscore0Alt">']
-	if opts.AlleleUnMappedReads:
-		Header_File += ['##FORMAT=<ID=iAUnMap,Number=R,Type=Integer,Description="Number reads supporting REF and ALT allele flagged as unmapped. Reported as NumberUnmappedRef,NumberUnmappedAlt">']
+	#if opts.AlleleUnMappedReads:
+	#	Header_File += ['##FORMAT=<ID=iAUnMap,Number=R,Type=Integer,Description="Number reads supporting REF and ALT allele flagged as unmapped. Reported as NumberUnmappedRef,NumberUnmappedAlt">']
 	if opts.AlleleMappingQualityZero:
 		Header_File += ['##FORMAT=<ID=iAMQ0,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele with mapping quality = 0. Reported as NumberMappingQuality0Ref,NumberMappingQuality0Alt">']
-	if opts.AlleleNotPrimaryAlignment:
-		Header_File += ['##FORMAT=<ID=iANPA,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as secondary alignment. Reported as NumberSecondaryAlignmentRef,NumberSecondaryAlignmentAlt">']
-	if opts.AlleleSupplementaryAlignment:
-		Header_File += ['##FORMAT=<ID=iASA,Number=R,Type=Integer,Description="Number reads supporting REF and ALT allele flagged as supplementary alignment. Reported as NumberUnmappedRef,NumberUnmappedAlt">']
-	if opts.AlleleNotPaired:
-		Header_File += ['##FORMAT=<ID=iANP,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as not paired. Reported as NumberNotPairedRef,NumberNotPairedAlt">']
-	if opts.AlleleNotProperPaired:
-		Header_File += ['##FORMAT=<ID=iANPP,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as not proper paired. Reported as NumberNotProperPairedRef,NumberNotProperPairedAlt">']
+	#if opts.AlleleNotPrimaryAlignment:
+	#	Header_File += ['##FORMAT=<ID=iANPA,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as secondary alignment. Reported as NumberSecondaryAlignmentRef,NumberSecondaryAlignmentAlt">']
+	#if opts.AlleleSupplementaryAlignment:
+	#	Header_File += ['##FORMAT=<ID=iASA,Number=R,Type=Integer,Description="Number reads supporting REF and ALT allele flagged as supplementary alignment. Reported as NumberUnmappedRef,NumberUnmappedAlt">']
+	#if opts.AlleleNotPaired:
+	#	Header_File += ['##FORMAT=<ID=iANP,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as not paired. Reported as NumberNotPairedRef,NumberNotPairedAlt">']
+	#if opts.AlleleNotProperPaired:
+	#	Header_File += ['##FORMAT=<ID=iANPP,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as not proper paired. Reported as NumberNotProperPairedRef,NumberNotProperPairedAlt">']
 	if opts.AlleleClippedReads:
 		Header_File += ['##FORMAT=<ID=iACR,Number=R,Type=Integer,Description="Number of clipped reads mapping REF and ALT allele reported as NumberClippedRef, NumberClippedAlt">']
 
@@ -165,10 +165,10 @@ def iAnnotation(Sample_dict, out, opts, Sequence_opts, Bam_opts, Genotype_opts, 
 					variant[H_CHR.index('FORMAT')] += ':' + 'iDUP'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Total_Duplicate_Reads'))) if sample in Sample_dict.keys() else ':.'
-				if opts.TotalDPUnfilter:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iTDP'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Total_Reads_Unfilter')) if sample in Sample_dict.keys() else ':.'
+				# if opts.TotalDPUnfilter:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iTDP'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Total_Reads_Unfilter')) if sample in Sample_dict.keys() else ':.'
 				if opts.iEvaDepth:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iDP'
 					for sample in Sample_tot:
@@ -185,14 +185,14 @@ def iAnnotation(Sample_dict, out, opts, Sequence_opts, Bam_opts, Genotype_opts, 
 					variant[H_CHR.index('FORMAT')] += ':' + 'iSB'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Strand_Bias_Reads'))) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleDuplicateDepth:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iADup'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Number_Read_Dup_Ref')) + ',' + str(Sample_Stat.get(sample).get('Number_Read_Dup_Alt')) if sample in Sample_dict.keys() else ':.'
-				if opts.DeltaDuplicate:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iDDup'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Delta_Duplicate'))) if sample in Sample_dict.keys() else ':.'
+				# if opts.AlleleDuplicateDepth:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iADup'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Number_Read_Dup_Ref')) + ',' + str(Sample_Stat.get(sample).get('Number_Read_Dup_Alt')) if sample in Sample_dict.keys() else ':.'
+				# if opts.DeltaDuplicate:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iDDup'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Delta_Duplicate'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleQscore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iQual'
 					for sample in Sample_tot:
@@ -205,42 +205,58 @@ def iAnnotation(Sample_dict, out, opts, Sequence_opts, Bam_opts, Genotype_opts, 
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAAS'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('AS_Ref'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('AS_Alt'))) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleMeanAlignmentScore:
+				if opts.AlleleSuboptimalAlignmentScore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAXS'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS_Ref'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS_Alt'))) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleMeanAlignmentScore:
+				if opts.AlleleSuboptimalAlignmentScoreZero:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAXS0'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS0_Ref'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS0_Alt'))) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleUnMappedReads:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iAUnMap'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('UnMap_Ref')) + ',' + str(Sample_Stat.get(sample).get('UnMap_Alt')) if sample in Sample_dict.keys() else ':.'
+				# if opts.AlleleUnMappedReads:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iAUnMap'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('UnMap_Ref')) + ',' + str(Sample_Stat.get(sample).get('UnMap_Alt')) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleMappingQualityZero:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAMQ0'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('MapQ0_Ref')) + ',' + str(Sample_Stat.get(sample).get('MapQ0_Alt')) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleNotPrimaryAlignment:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iANPA'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Primary_Align_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Primary_Align_Alt')) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleSupplementaryAlignment:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iASA'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Suppl_Alignment_Ref')) + ',' + str(Sample_Stat.get(sample).get('Suppl_Alignment_Alt')) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleNotPaired:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iANP'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Paired_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Paired_Alt')) if sample in Sample_dict.keys() else ':.'
-				if opts.AlleleNotProperPaired:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iANPP'
-					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Proper_Paired_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Proper_Paired_Alt')) if sample in Sample_dict.keys() else ':.'
+				#if opts.AlleleNotPrimaryAlignment:
+				#	variant[H_CHR.index('FORMAT')] += ':' + 'iANPA'
+				#	for sample in Sample_tot:
+				#		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Primary_Align_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Primary_Align_Alt')) if sample in Sample_dict.keys() else ':.'
+				# if opts.AlleleSupplementaryAlignment:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iASA'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Suppl_Alignment_Ref')) + ',' + str(Sample_Stat.get(sample).get('Suppl_Alignment_Alt')) if sample in Sample_dict.keys() else ':.'
+				# if opts.AlleleNotPaired:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iANP'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Paired_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Paired_Alt')) if sample in Sample_dict.keys() else ':.'
+				# if opts.AlleleNotProperPaired:
+				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iANPP'
+				# 	for sample in Sample_tot:
+				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Proper_Paired_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Proper_Paired_Alt')) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleClippedReads:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iACR'
 					for sample in Sample_tot:
 						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Clipped_Reads_Ref')) + ',' + str(Sample_Stat.get(sample).get('Clipped_Reads_Alt')) if sample in Sample_dict.keys() else ':.'
+				if opts.iBaseQualRankSumTest:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iQualRankTest'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('QualRankTest')) if sample in Sample_dict.keys() else ':.'
+				if opts.iMapQualRankSumTest:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iMapRankTest'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('MappingRankTest')) if sample in Sample_dict.keys() else ':.'
+				if opts.iReadPosRankSumTest:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iPosRankTest'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('PosaRankTest')) if sample in Sample_dict.keys() else ':.'
+				if opts.iAltMeanReadPos:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iAltMeanPos'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('iAltMeanPos')) if sample in Sample_dict.keys() else ':.'
 
 				if opts.verbose:
 					if variant[H_CHR.index('#CHROM')] != CHR_Counter and CHR_Counter == '':

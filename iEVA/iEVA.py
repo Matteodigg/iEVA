@@ -2,8 +2,7 @@ import sys
 import argparse
 import iCheck
 import vcfwriter
-import scipy
-import multiprocessing
+#import multiprocessing
 
 if __name__ == '__main__':
 
@@ -44,36 +43,38 @@ if __name__ == '__main__':
 	Genotype.add_argument('-SNVmmq','--SNVMinMappingQuality',default=30,type=int,metavar='[0-60]',help="Minimum Mapping Quality threshold for reads supporting SNV position. Used on Genotype exatrction arguments. Default=30")
 	Genotype.add_argument('-INDELmbq','--IndelMinBaseQuality',default=10,type=int,metavar='[0-66]',help="Minimum Base Quality threshold for base supporting InDel position. Used on Genotype exatrction arguments. Default=10")
 	Genotype.add_argument('-INDELmmq','--IndelMinMappingQuality',default=20,type=int,metavar='[0-60]',help="Minimum Mapping Quality threshold for reads supporting InDel position. Used on Genotype exatrction arguments. Default=20")
-	Genotype.add_argument('-iTDP','--TotalDPUnfilter',action="store_true",help="Total read depth. No filter applied, include duplicate reads. Look at -iDP option for filtered iDP.")
+	#Genotype.add_argument('-iTDP','--TotalDPUnfilter',action="store_true",help="Total read depth. No filter applied, include duplicate reads. Look at -iDP option for filtered iDP.")
 	Genotype.add_argument('-iDP','--iEvaDepth',action="store_true",help="iEVA read depth for variant position. Only proper paired, proper mapped and not duplicate reads are included.")
 	Genotype.add_argument('-iAD','--AlleleDepth',action="store_true",help="iEVA Allele Depth reported as Ref,Alt")
-	Genotype.add_argument('-iSBD','--StrandBiasDepth',action="store_true",help="Depth of bases supporting REF and ALT allele on forward and reverse strand for strand bias detection (R+, R-, A+, A-)")
-	Genotype.add_argument('-iSB','--StrandBias',action="store_true",help="Fisher's exact test based on read orientation (R1+,R1-,R2+,R2-) to detect strand bias. Only for paired-end sequencing experiments.")
-	Genotype.add_argument('-iADup','--AlleleDuplicateDepth',action="store_true",help="iEVA Allele Depth of read marked as duplicate. Reported as NumberDupRef, NumberDupAlt")
-	Genotype.add_argument('-iDDup','--DeltaDuplicate',action="store_true",help="Difference between fraction duplicate reads in REF and ALT alleles (REF-ALT) for Het variants. Negative values show preference in duplicate for REF allele, positive for ALT, 0 means balanced.")
+	Genotype.add_argument('-iSBD','--StrandBiasDepth',action="store_true",help="Depth of bases supporting REF and ALT allele on forward and reverse strand for strand bias detection (Ref+,Ref-,Alt+,Alt-)")
+	Genotype.add_argument('-iSB','--StrandBias',action="store_true",help="Fisher's exact test based on read orientation (Ref+,Ref-,Alt+,Alt-) to detect strand bias.")
+	#Genotype.add_argument('-iADup','--AlleleDuplicateDepth',action="store_true",help="iEVA Allele Depth of read marked as duplicate. Reported as NumberDupRef, NumberDupAlt")
+	#Genotype.add_argument('-iDDup','--DeltaDuplicate',action="store_true",help="Difference between fraction duplicate reads in REF and ALT alleles (REF-ALT) for Het variants. Negative values show preference in duplicate for REF allele, positive for ALT, 0 means balanced.")
 	Genotype.add_argument('-iQual','--AlleleQscore',action="store_true",help="Mean Q-score for REF and ALT allele. Reported as MeanQscoreRef, MeanQscoreAlt")
 	Genotype.add_argument('-iAMQ','--AlleleMeanMappingQuality',action="store_true",help="Mean mapping quality for reads supporting REF and ALT allele. Reported as MeanMappingQualRef,MeanMappingQualAlt")
 	Genotype.add_argument('-iAAS','--AlleleMeanAlignmentScore',action="store_true",help="Mean alignment score for reads supporting REF and ALT allele. Reported as MeanAlignmentScoreRef,MeanAlignmentScoreAlt")
 	Genotype.add_argument('-iAXS','--AlleleSuboptimalAlignmentScore',action="store_true",help="Mean Suboptimal Alignment Score for reads supporting REF and ALT allele. Reported as MeanXSscoreRef,MeanXSscoreAlt")
 	Genotype.add_argument('-iAXS0','--AlleleSuboptimalAlignmentScoreZero',action="store_true",help="Number of reads supporting REF and ALT allele with Suboptimal Alignment Score = 0. Reported as NumberReadsXSscore0Ref,NumberReadsXSscore0Alt")
-	Genotype.add_argument('-iAUnMap','--AlleleUnMappedReads',action="store_true",help="Number reads supporting REF and ALT allele flagged as unmapped. Reported as NumberUnmappedRef,NumberUnmappedAlt")
+	#Genotype.add_argument('-iAUnMap','--AlleleUnMappedReads',action="store_true",help="Number reads supporting REF and ALT allele flagged as unmapped. Reported as NumberUnmappedRef,NumberUnmappedAlt")
 	Genotype.add_argument('-iAMQ0','--AlleleMappingQualityZero',action="store_true",help="Number of reads supporting REF and ALT allele with mapping quality = 0. Reported as NumberMappingQuality0Ref,NumberMappingQuality0Alt")
-	Genotype.add_argument('-iANPA','--AlleleNotPrimaryAlignment',action="store_true",help="Number of reads supporting REF and ALT allele flagged as secondary alignment. Reported as NumberSecondaryAlignmentRef,NumberSecondaryAlignmentAlt")
-	Genotype.add_argument('-iASA','--AlleleSupplementaryAlignment',action="store_true",help="Number reads supporting REF and ALT allele flagged as supplementary alignment. Reported as NumberUnmappedRef,NumberUnmappedAlt")
-	Genotype.add_argument('-iANP','--AlleleNotPaired',action="store_true",help="Number of reads supporting REF and ALT allele flagged as not paired. Reported as NumberNotPairedRef,NumberNotPairedAlt")
-	Genotype.add_argument('-iANPP','--AlleleNotProperPaired',action="store_true",help="Number of reads supporting REF and ALT allele flagged as not proper paired. Reported as NumberNotProperPairedRef,NumberNotProperPairedAlt")
+	#Genotype.add_argument('-iANPA','--AlleleNotPrimaryAlignment',action="store_true",help="Number of reads supporting REF and ALT allele flagged as secondary alignment. Reported as NumberSecondaryAlignmentRef,NumberSecondaryAlignmentAlt")
+	#Genotype.add_argument('-iASA','--AlleleSupplementaryAlignment',action="store_true",help="Number reads supporting REF and ALT allele flagged as supplementary alignment. Reported as NumberUnmappedRef,NumberUnmappedAlt")
+	#Genotype.add_argument('-iANP','--AlleleNotPaired',action="store_true",help="Number of reads supporting REF and ALT allele flagged as not paired. Reported as NumberNotPairedRef,NumberNotPairedAlt")
+	#Genotype.add_argument('-iANPP','--AlleleNotProperPaired',action="store_true",help="Number of reads supporting REF and ALT allele flagged as not proper paired. Reported as NumberNotProperPairedRef,NumberNotProperPairedAlt")
 	Genotype.add_argument('-iACR','--AlleleClippedReads',action="store_true",help="Number of clipped reads mapping REF and ALT allele. Reported as NumberClippedReadsRef,NumberClippedReadsAlt")
-
+	Genotype.add_argument('-iQualRankTest','--iBaseQualRankSumTest',action="store_true",help="Z-score from Wilcoxon rank sum test of Alt vs. Ref base qualities")
+	Genotype.add_argument('-iMapRankTest','--iMapQualRankSumTest',action="store_true",help="Z-score from Wilcoxon rank sum test of Alt vs. Ref mapping qualities")
+	Genotype.add_argument('-iPosRankTest','--iReadPosRankSumTest',action="store_true",help="Z-score from Wilcoxon rank sum test of Alt vs. Ref read position bias")
+	Genotype.add_argument('-iAltMeanPos','--iAltMeanReadPos',action="store_true",help="Mean read position of Alt allele for Amplicon sequencing data.")
 
 	global opts
 	opts = parser.parse_args()
 
 	#Define options to speedup processing time
-	Genotype_opts = [opts.AlleleDepth, opts.TotalDPUnfilter, opts.AlleleQscore, opts.AlleleMeanMappingQuality, opts.AlleleSuboptimalAlignmentScore,
-					opts.AlleleUnMappedReads, opts.AlleleMappingQualityZero, opts.AlleleNotPrimaryAlignment, opts.AlleleSupplementaryAlignment,
-					opts.AlleleNotPaired, opts.AlleleNotProperPaired, opts.DeltaDuplicate, opts.iEvaDepth, opts.AlleleClippedReads,
-					opts.AlleleDuplicateDepth, opts.AlleleMeanAlignmentScore, opts.AlleleSuboptimalAlignmentScoreZero,
-					opts.StrandBias, opts.StrandBiasDepth]
+	Genotype_opts = [opts.AlleleDepth, opts.AlleleQscore, opts.AlleleMeanMappingQuality, opts.AlleleSuboptimalAlignmentScore,
+					opts.AlleleMappingQualityZero, opts.iEvaDepth, opts.AlleleClippedReads, opts.AlleleMeanAlignmentScore,
+					opts.AlleleSuboptimalAlignmentScoreZero, opts.StrandBias, opts.StrandBiasDepth, opts.iBaseQualRankSumTest,
+					opts.iMapQualRankSumTest, opts.iReadPosRankSumTest, opts.iAltMeanReadPos]
 
 	Bam_opts = [opts.NotPrimaryAlignment, opts.MeanMappingQuality, opts.SuboptimalAlignmentScore,
 				opts.SupplementaryAlignment, opts.AlignmentScore, opts.MappingQualityZero,
