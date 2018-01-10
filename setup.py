@@ -23,12 +23,12 @@ setup(
     author_email = 'matteodeg@gmail.com',
     packages = ['iEVA'],
     install_requires = requirements,
-    entry_points = {
-	'console_scripts': ['iEVA = iEVA.iEVA:main']
-	},
-    classifiers=[
-        'Development Status :: 3 - Alpha',
-        'Environment :: Console',
-        'Programming Language :: Python',
-    ],
+ #    entry_points = {
+	# 'console_scripts': ['iEVA = iEVA.iEVA:main']
+	# },
+     classifiers=[
+         #'Development Status :: 3 - Alpha',
+         #'Environment :: Console',
+         'Programming Language :: Python',
+     ],
 )

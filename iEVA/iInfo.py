@@ -27,7 +27,7 @@ def Extract_Variant_Type(variant, H_CHR):
 			Variant_Class = '.'
 
 	return Variant_Class
-	
+
 
 def Extract_Reds_Info(read, Reads_Info):
 
@@ -37,8 +37,13 @@ def Extract_Reds_Info(read, Reads_Info):
 
 	if read.alignment.is_duplicate:
 		Reads_Info['Duplicate_reads'] += 1
+		print read
 
-	if read.alignment.is_duplicate == False:
+	if read.alignment.is_qcfail:
+		Reads_Info['QCfail'] += 1
+		print read
+
+	else:
 		Reads_Info['Total_Reads_No_Dup'] += 1
 		Reads_Info['Alignment_Score'] += read.alignment.get_tag('AS')
 		Reads_Info['Suboptimal_Alignment_Score'] += read.alignment.get_tag('XS')
@@ -61,21 +66,19 @@ def Extract_Reds_Info(read, Reads_Info):
 		if read.alignment.is_secondary:
 			Reads_Info['Not_Primary_Align'] += 1
 
-		if read.alignment.is_unmapped == False:
+		# if read.alignment.is_unmapped == False:
 
-			if read.alignment.is_read1:
-				Reads_Info['is_read1'] += 1
-				if read.alignment.mate_is_reverse:
-					Reads_Info['is_read1_forward'] += 1
-				elif read.alignment.is_reverse:
-					Reads_Info['is_read1_reverse'] += 1
+		# 	if read.alignment.is_read1:
+		# 		if read.alignment.mate_is_reverse:
+		# 			Reads_Info['is_read1_forward'] += 1
+		# 		elif read.alignment.is_reverse:
+		# 			Reads_Info['is_read1_reverse'] += 1
 				
-			elif read.alignment.is_read2:
-				Reads_Info['is_read2'] += 1
-				if read.alignment.is_reverse:
-					Reads_Info['is_read2_reverse'] += 1
-				if read.alignment.mate_is_reverse:
-					Reads_Info['is_read2_forward'] += 1
+		# 	elif read.alignment.is_read2:
+		# 		if read.alignment.is_reverse:
+		# 			Reads_Info['is_read2_reverse'] += 1
+		# 		if read.alignment.mate_is_reverse:
+		# 			Reads_Info['is_read2_forward'] += 1
 
 	return Reads_Info
 
@@ -86,17 +89,24 @@ def Genotype_Reads_Info(read, Reads_Info, Allele, Variant_Class, variant_lenght,
 
 		if Variant_Class == 'snv':
 			Reads_Info['Alt_Mapping_Quality'] += read.alignment.mapping_quality
+			Reads_Info['MappingRankAlt'] += [read.alignment.mapping_quality]
 			Reads_Info['Base_Alt_Qual'] += read.alignment.query_qualities[read.query_position]
+			Reads_Info['QualRankAlt'] += [read.alignment.query_qualities[read.query_position]]
+			Reads_Info['PosRankAlt'] += [read.query_position]
 		
 		elif Variant_Class == 'Del':
 			Reads_Info['Alt_Mapping_Quality'] += read.alignment.mapping_quality
+			Reads_Info['MappingRankAlt'] += [read.alignment.mapping_quality]
 			Alt_Qual = round(float(sum([read.alignment.query_qualities[read.query_position]] + [read.alignment.query_qualities[read.query_position+1]]))/float(2),2)
 			Reads_Info['Base_Alt_Qual'] += Alt_Qual
+			Reads_Info['QualRankAlt'] += [Alt_Qual]
 
 		elif Variant_Class == 'Ins':
 			Reads_Info['Alt_Mapping_Quality'] += read.alignment.mapping_quality
+			Reads_Info['MappingRankAlt'] += [read.alignment.mapping_quality]
 			Alt_Qual = round(float(sum(read.alignment.query_qualities[Exact_Match[1][0]:Exact_Match[-1][0]]))/float(variant_lenght-1),2)
 			Reads_Info['Base_Alt_Qual'] += Alt_Qual
+			Reads_Info['QualRankAlt'] += [Alt_Qual]
 
 		Reads_Info['Read_Alt'] += 1
 		Reads_Info['AS_Alt'] += read.alignment.get_tag('AS')
@@ -110,10 +120,10 @@ def Genotype_Reads_Info(read, Reads_Info, Allele, Variant_Class, variant_lenght,
 		
 		if read.alignment.mapping_quality == 0:
 			Reads_Info['MapQ0_Alt'] += 1
-		
+
 		if read.alignment.is_secondary:
 			Reads_Info['NPA_Alt'] += 1
-		
+
 		if read.alignment.is_supplementary:
 			Reads_Info['Suppl_Alt'] += 1
 		
@@ -122,26 +132,39 @@ def Genotype_Reads_Info(read, Reads_Info, Allele, Variant_Class, variant_lenght,
 		
 		if read.alignment.is_proper_pair == False:
 			Reads_Info['NPP_Alt'] += 1
-		
+
 		if 'S' in read.alignment.cigarstring or 'H' in read.alignment.cigarstring:
 			Reads_Info['Clipped_Reads_Alt'] += 1
+
+		if read.alignment.mate_is_reverse:
+			Reads_Info['ALT+'] += 1
+
+		if read.alignment.is_reverse:
+			Reads_Info['ALT-'] += 1
 
 	elif Allele == 'REF':
 
 		if Variant_Class == 'snv':
 			Reads_Info['Ref_Mapping_Quality'] += read.alignment.mapping_quality
+			Reads_Info['MappingRankRef'] += [read.alignment.mapping_quality]
 			Reads_Info['Base_Ref_Qual'] += read.alignment.query_qualities[read.query_position]
+			Reads_Info['QualRankRef'] += [read.alignment.query_qualities[read.query_position]]
+			Reads_Info['PosRankRef'] += [read.query_position]
 
 		elif Variant_Class == 'Del':
 			Reads_Info['Ref_Mapping_Quality'] += read.alignment.mapping_quality
+			Reads_Info['MappingRankRef'] = [read.alignment.mapping_quality]
 			Base_Qual = round(float(sum(read.alignment.query_qualities[read.query_position:read.query_position+variant_lenght]))/float(variant_lenght),2)
 			Reads_Info['Base_Ref_Qual'] += Base_Qual
+			Reads_Info['QualRankRef'] = [Base_Qual]
 
 		elif Variant_Class == 'Ins':
 			Reads_Info['Ref_Mapping_Quality'] += read.alignment.mapping_quality
+			Reads_Info['MappingRankRef'] = [read.alignment.mapping_quality]
 			Base_Qual = round(float(sum(read.alignment.query_qualities[Exact_Match[0][0]:(Exact_Match[-1][0])+1]))/float(2),2)
 			Reads_Info['Base_Ref_Qual'] += Base_Qual
-		
+			Reads_Info['QualRankRef'] = [Base_Qual]
+
 		Reads_Info['Read_Ref'] += 1
 		Reads_Info['AS_Ref'] += read.alignment.get_tag('AS')
 		Reads_Info['XS_Ref'] += read.alignment.get_tag('XS')
@@ -169,5 +192,11 @@ def Genotype_Reads_Info(read, Reads_Info, Allele, Variant_Class, variant_lenght,
 		
 		if 'S' in read.alignment.cigarstring or 'H' in read.alignment.cigarstring:
 			Reads_Info['Clipped_Reads_Ref'] += 1
+
+		if read.alignment.mate_is_reverse:
+			Reads_Info['REF+'] += 1
+
+		if read.alignment.is_reverse:
+			Reads_Info['REF-'] += 1
 
 	return Reads_Info
