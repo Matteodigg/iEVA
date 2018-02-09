@@ -4,13 +4,13 @@ import sys
 def Check_Parameters(arg,opts,min,max):
 
 	if opts > max or opts < min:
-		sys.exit('\nArgument ' + arg + ' :' + ' expecated value in range ' + str(min) + '-' + str(max) + '\n')
+		sys.exit('\nArgument %s : expected value in range %s - %s\n' % (arg,str(min),str(max)))
 
 
 def Check_SimpleRepeatList(arg,opts):
 
 	if opts.SimpleRepeatList and not opts.SimpleRepeat:
-		sys.exit('\nTo use ' + arg + ' please enable -SR, --SimpleRepeats option' + '\n')
+		sys.exit('\nTo use %s please enable -SR, --SimpleRepeats option' % (arg))
 
 
 def Check_Zero(number):
@@ -50,12 +50,13 @@ def Check_Bam(Sample_list, bam_list):
 
 	if len(unmatched_file) != 0:
 		for elem in unmatched_file:
-			print '\n' + "Bam file " + str(elem) + " does not match any sample in genptype vcf field."
+			print '\nBam file %s does not match any sample in genotype vcf field.\n' % (elem)
 	if len(Sample_list) != 0:
 		for elem in Sample_list:
-			print '\n' + "Sample " + str(elem) + " will not be annotated. Missing bam file." + '\n'
+			print '\nSample %s will not be annotated. Missing bam file.\n' % (elem)
 
 	return Sample_dict,Sample_list
+
 
 def Check_list(opts,Bam_opts,Genotype_opts):
 	
@@ -63,4 +64,4 @@ def Check_list(opts,Bam_opts,Genotype_opts):
 		if opts.list:
 			pass
 		else:
-			sys.exit('\n' + 'To Enable bam features insert path to bam list with command -L (--list)' + '\n')
+			sys.exit('\nTo Enable bam features insert path to bam list with command -L (--list)\n')

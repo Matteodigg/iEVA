@@ -30,6 +30,8 @@ def iHeader(Header_File, H_CHR, opts):
 		Header_File += ['##INFO=<ID=iVC,Number=1,Type=String,Description="Annotated variant class: SNV=snv, Insertion=Ins, Deletion=Del, SequenceAlteration=Alt">']
 	if opts.UnMappedReads:
 		Header_File += ['##FORMAT=<ID=iUnMap,Number=1,Type=Float,Description="Fraction of unmapped reads">']
+	if opts.MateIsUnmapped:
+		Header_File += ['##FORMAT=<ID=iUnMap,Number=1,Type=Float,Description="Fraction of reads having unmapped mate">']
 	if opts.MeanMappingQuality:
 		Header_File += ['##FORMAT=<ID=iMQ,Number=1,Type=Float,Description="Mean mapping quality for reads mapping variant position">']
 	if opts.MappingQualityZero:
@@ -48,22 +50,20 @@ def iHeader(Header_File, H_CHR, opts):
 		Header_File += ['##FORMAT=<ID=iXS,Number=1,Type=Float,Description="Mean suboptimal alignment score of reads mapping variant position">']
 	if opts.TotalDupReads:
 		Header_File += ['##FORMAT=<ID=iDUP,Number=1,Type=Integer,Description="Fraction of total reads mapping position marked as duplicate">']
-	#if opts.TotalDPUnfilter:
-	#	Header_File += ['##FORMAT=<ID=iTDP,Number=1,Type=Integer,Description="Total read depth. No filter applied">']
 	if opts.iEvaDepth:
 		Header_File += ['##FORMAT=<ID=iDP,Number=1,Type=Integer,Description="iEVA read depth. Duplicate reads are excluded.">']
 	if opts.AlleleDepth:
 		Header_File += ['##FORMAT=<ID=iAD,Number=R,Type=Integer,Description="Allelic depth reported by iEVA as Ref,Alt">']
+	if opts.AlleleFrequency:
+		Header_File += ['##FORMAT=<ID=iFREQ,Number=1,Type=float,Description="Alternate allele frequency on variant position">']
 	if opts.StrandBiasDepth:
 		Header_File += ['##FORMAT=<ID=iSBD,Number=4,Type=Integer,Description="Depth of bases supporting REF and ALT allele on forward and reverse strand for strand bias detection (R+, R-, A+, A-)">']
 	if opts.StrandBias:
 		Header_File += ['##FORMAT=<ID=iSB,Number=1,Type=Float,Description="Fisher exact test to detect strand bias (R+,R-,A+,A-)">']
-	#if opts.AlleleDuplicateDepth:
-	#	Header_File += ['##FORMAT=<ID=iADup,Number=R,Type=Integer,Description="iEVA Allele Depth of read marked as duplicate. Reported as NumberDupRef, NumberDupAlt">']
-	#if opts.DeltaDuplicate:
-	#	Header_File += ['##FORMAT=<ID=iDDup,Number=1,Type=Float,Description="Difference between fraction of duplicate reads for REF and ALT alleles (DupREF-DupALT) for Het variants">']
 	if opts.AlleleQscore:
 		Header_File += ['##FORMAT=<ID=iQual,Number=R,Type=Float,Description="Mean Q-score for REF and ALT allele reported as MeanRefQscore, MeanAltQscore">']
+	if opts.iBaseQualValAround:
+		Header_File += ['##FORMAT=<ID=iBQVA,Number=1,Type=Float,Description="Mean base quality value around the called variant (+-3 bases).">']
 	if opts.AlleleMeanMappingQuality:
 		Header_File += ['##FORMAT=<ID=iAMQ,Number=R,Type=Float,Description="Mean mapping quality for reads supporting REF and ALT allele reported as MeanMappingQualRef,MeanMappingQualAlt">']
 	if opts.AlleleMeanAlignmentScore:
@@ -72,21 +72,20 @@ def iHeader(Header_File, H_CHR, opts):
 		Header_File += ['##FORMAT=<ID=iAXS,Number=R,Type=Float,Description="Mean suboptimal alignment score for reads supporting REF and ALT allele. Reported as MeanSuboptimalAlignmentScoreRef,MeanSuboptimalAlignmentScoreAlt">']
 	if opts.AlleleSuboptimalAlignmentScoreZero:
 		Header_File += ['##FORMAT=<ID=iAXS0,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele with Suboptimal Alignment Score = 0. Reported as NumberReadsXSscore0Ref,NumberReadsXSscore0Alt">']
-	#if opts.AlleleUnMappedReads:
-	#	Header_File += ['##FORMAT=<ID=iAUnMap,Number=R,Type=Integer,Description="Number reads supporting REF and ALT allele flagged as unmapped. Reported as NumberUnmappedRef,NumberUnmappedAlt">']
 	if opts.AlleleMappingQualityZero:
 		Header_File += ['##FORMAT=<ID=iAMQ0,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele with mapping quality = 0. Reported as NumberMappingQuality0Ref,NumberMappingQuality0Alt">']
-	#if opts.AlleleNotPrimaryAlignment:
-	#	Header_File += ['##FORMAT=<ID=iANPA,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as secondary alignment. Reported as NumberSecondaryAlignmentRef,NumberSecondaryAlignmentAlt">']
-	#if opts.AlleleSupplementaryAlignment:
-	#	Header_File += ['##FORMAT=<ID=iASA,Number=R,Type=Integer,Description="Number reads supporting REF and ALT allele flagged as supplementary alignment. Reported as NumberUnmappedRef,NumberUnmappedAlt">']
-	#if opts.AlleleNotPaired:
-	#	Header_File += ['##FORMAT=<ID=iANP,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as not paired. Reported as NumberNotPairedRef,NumberNotPairedAlt">']
-	#if opts.AlleleNotProperPaired:
-	#	Header_File += ['##FORMAT=<ID=iANPP,Number=R,Type=Integer,Description="Number of reads supporting REF and ALT allele flagged as not proper paired. Reported as NumberNotProperPairedRef,NumberNotProperPairedAlt">']
 	if opts.AlleleClippedReads:
 		Header_File += ['##FORMAT=<ID=iACR,Number=R,Type=Integer,Description="Number of clipped reads mapping REF and ALT allele reported as NumberClippedRef, NumberClippedAlt">']
-
+	if opts.iClipRankSumTest:
+		Header_File += ['##FORMAT=<ID=iCRT,Number=1,Type=Float,Description="Mann-Whitney Rank sum test for difference between in number of clipped reads of variants from Ref and Alt (p-value).">']
+	if opts.iBaseQualRankSumTest:
+		Header_File += ['##FORMAT=<ID=iQRT,Number=1,Type=Float,Description="Mann-Whitney Rank sum test for difference between in base quality of bases supporting Ref and Alt (p-value).">']
+	if opts.iMapQualRankSumTest:
+		Header_File += ['##FORMAT=<ID=iMRT,Number=1,Type=Float,Description="Mann-Whitney Rank sum test for difference between in mapping quality of reads of variants from Ref and Alt (p-value).">']
+	if opts.iReadPosRankSumTest:
+		Header_File += ['##FORMAT=<ID=iPRT,Number=1,Type=Float,Description="Mann-Whitney Rank sum test for difference between in positions of variants in reads from Ref and Alt (p-value).">']
+	if opts.iAltNormReadPos:
+		Header_File += ['##FORMAT=<ID=iANRP,Number=1,Type=Float,Description="Mean read position of variant normalized on read length. [0-1] 1 means that variant falls at the beginning/end of read, 0 indicating variant falls in the middle of the read. (Useful in Amplicon analysis)">']
 
 	return Header_File, H_CHR
 
@@ -105,165 +104,151 @@ def iAnnotation(Sample_dict, out, opts, Sequence_opts, Bam_opts, Genotype_opts, 
 				variant = variant.split('\t')
 				Variant_Class = iInfo.Extract_Variant_Type(variant, H_CHR)
 
+
+
 				if any(Sequence_opts):
 					RepeatSeq, RepeatSeq_Lenght, RepeatSeq_Unit, Psuedo_Nucleotide, RM, GC = iSequence.SimpleRepeats_Finder(Reference, variant, H_CHR, Variant_Class, opts, Repeat_list)
 				if opts.SimpleRepeat:
-					variant[H_CHR.index('INFO')] += ';' + 'SR=' + str(RepeatSeq)
+					variant[H_CHR.index('INFO')] += ';' + 'iSR=' + str(RepeatSeq)
 				if opts.SimpleRepeatLength:
-					variant[H_CHR.index('INFO')] += ';' + 'SRL=' + str(RepeatSeq_Lenght)
+					variant[H_CHR.index('INFO')] += ';' + 'iSRL=' + str(RepeatSeq_Lenght)
 				if opts.SimpleRepeatUnit:
-					variant[H_CHR.index('INFO')] += ';' + 'SRU=' + str(RepeatSeq_Unit)
+					variant[H_CHR.index('INFO')] += ';' + 'iSRU=' + str(RepeatSeq_Unit)
 				if opts.PseudoNucleotidesComposition:
-					variant[H_CHR.index('INFO')] += ';' + 'PNC=' + ','.join(str(Din) for Din in Psuedo_Nucleotide)
+					variant[H_CHR.index('INFO')] += ';' + 'iPNC=' + ','.join(str(Din) for Din in Psuedo_Nucleotide)
 				if opts.RepeatMasker:
-					variant[H_CHR.index('INFO')] += ';' + 'RM=' + RM
+					variant[H_CHR.index('INFO')] += ';' + 'iRM=' + RM
 				if opts.gcContent:
-					variant[H_CHR.index('INFO')] += ';' + 'GC=' + GC
+					variant[H_CHR.index('INFO')] += ';' + 'iGC=' + GC
 				if opts.VariantClass:
-					variant[H_CHR.index('INFO')] += ';' + 'VC=' + str(Variant_Class)
+					variant[H_CHR.index('INFO')] += ';' + 'iVC=' + Variant_Class
 
 				if any(Genotype_opts) or any(Bam_opts):
-					Sample_Stat = iBam.Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, opts.SNVMinBaseQuality, opts.SNVMinMappingQuality, opts.IndelMinBaseQuality, opts.IndelMinMappingQuality, Bam_opts, Genotype_opts)
+					Sample_Stat = iBam.Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, opts.SNVMinBaseQuality, opts.SNVMinMappingQuality, opts.IndelMinBaseQuality, opts.IndelMinMappingQuality, Bam_opts, Genotype_opts, opts)
 
 				if opts.UnMappedReads:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iUnMap'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Unmapped_Reads'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Unmapped_Reads'))) if sample in Sample_dict.keys() else ':.'
 				if opts.MeanMappingQuality:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iMQ'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Total_Mean_Mapping_Quality'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Total_Mean_Mapping_Quality'))) if sample in Sample_dict.keys() else ':.'
 				if opts.MappingQualityZero:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iMQ0'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Mapping_Quality_Zero'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Mapping_Quality_Zero'))) if sample in Sample_dict.keys() else ':.'
 				if opts.NotPrimaryAlignment:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iNPA'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Not_Primary_Alignment_Reads'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Not_Primary_Alignment_Reads'))) if sample in Sample_dict.keys() else ':.'
 				if opts.SupplementaryAlignment:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iSA'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Supplementary_Align'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Supplementary_Align'))) if sample in Sample_dict.keys() else ':.'
 				if opts.NotPairedReads:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iNP'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Not_Paired_Reads'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Not_Paired_Reads'))) if sample in Sample_dict.keys() else ':.'
 				if opts.NotProperPairedReads:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iNPP'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Not_Proper_Paired_Reads'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Percentage_Not_Proper_Paired_Reads'))) if sample in Sample_dict.keys() else ':.'
+				if opts.MateIsUnmapped:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iMIU'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Mate_is_Unmapped'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlignmentScore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAS'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Mean_Alignment_Score'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Mean_Alignment_Score'))) if sample in Sample_dict.keys() else ':.'
 				if opts.SuboptimalAlignmentScore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iXS'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Mean_Suboptimal_Alignment_Score'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Mean_Suboptimal_Alignment_Score'))) if sample in Sample_dict.keys() else ':.'
 				if opts.TotalDupReads:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iDUP'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Total_Duplicate_Reads'))) if sample in Sample_dict.keys() else ':.'
-				# if opts.TotalDPUnfilter:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iTDP'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Total_Reads_Unfilter')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Total_Duplicate_Reads'))) if sample in Sample_dict.keys() else ':.'
 				if opts.iEvaDepth:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iDP'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Coverage')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('Coverage')) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleDepth:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAD'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Read_Ref')) + ',' + str(Sample_Stat.get(sample).get('Read_Alt')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (Sample_Stat.get(sample).get('Read_Ref'),Sample_Stat.get(sample).get('Read_Alt')) if sample in Sample_dict.keys() else ':.'
+				if opts.AlleleFrequency:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iFREQ'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('Allele_Frequency')) if sample in Sample_dict.keys() else ':.'
 				if opts.StrandBiasDepth:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iSBD'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('REF+')) + ',' + str(Sample_Stat.get(sample).get('REF-')) + ',' + str(Sample_Stat.get(sample).get('ALT+')) + ',' + str(Sample_Stat.get(sample).get('ALT-')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s,%s,%s' % (Sample_Stat.get(sample).get('REF+'),Sample_Stat.get(sample).get('REF-'),Sample_Stat.get(sample).get('ALT+'),Sample_Stat.get(sample).get('ALT-')) if sample in Sample_dict.keys() else ':.'
 				if opts.StrandBias:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iSB'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Strand_Bias_Reads'))) if sample in Sample_dict.keys() else ':.'
-				# if opts.AlleleDuplicateDepth:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iADup'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Number_Read_Dup_Ref')) + ',' + str(Sample_Stat.get(sample).get('Number_Read_Dup_Alt')) if sample in Sample_dict.keys() else ':.'
-				# if opts.DeltaDuplicate:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iDDup'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Delta_Duplicate'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Strand_Bias_Reads'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleQscore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iQual'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Qual_Ref')) + ',' + str(Sample_Stat.get(sample).get('Qual_Alt')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (Sample_Stat.get(sample).get('Qual_Ref'), Sample_Stat.get(sample).get('Qual_Alt')) if sample in Sample_dict.keys() else ':.'
+				if opts.iBaseQualValAround:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iBQVA'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('BaseQualValAround')) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleMeanMappingQuality:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAMMQ'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Ref_Mean_Mapping_Quality'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('Alt_Mean_Mapping_Quality'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('Ref_Mean_Mapping_Quality')),iCheck.Check_Zero(Sample_Stat.get(sample).get('Alt_Mean_Mapping_Quality'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleMeanAlignmentScore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAAS'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('AS_Ref'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('AS_Alt'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('AS_Ref')),iCheck.Check_Zero(Sample_Stat.get(sample).get('AS_Alt'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleSuboptimalAlignmentScore:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAXS'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS_Ref'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS_Alt'))) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('XS_Ref')),iCheck.Check_Zero(Sample_Stat.get(sample).get('XS_Alt'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleSuboptimalAlignmentScoreZero:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAXS0'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS0_Ref'))) + ',' + str(iCheck.Check_Zero(Sample_Stat.get(sample).get('XS0_Alt'))) if sample in Sample_dict.keys() else ':.'
-				# if opts.AlleleUnMappedReads:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iAUnMap'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('UnMap_Ref')) + ',' + str(Sample_Stat.get(sample).get('UnMap_Alt')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (iCheck.Check_Zero(Sample_Stat.get(sample).get('XS0_Ref')),iCheck.Check_Zero(Sample_Stat.get(sample).get('XS0_Alt'))) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleMappingQualityZero:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iAMQ0'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('MapQ0_Ref')) + ',' + str(Sample_Stat.get(sample).get('MapQ0_Alt')) if sample in Sample_dict.keys() else ':.'
-				#if opts.AlleleNotPrimaryAlignment:
-				#	variant[H_CHR.index('FORMAT')] += ':' + 'iANPA'
-				#	for sample in Sample_tot:
-				#		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Primary_Align_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Primary_Align_Alt')) if sample in Sample_dict.keys() else ':.'
-				# if opts.AlleleSupplementaryAlignment:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iASA'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Suppl_Alignment_Ref')) + ',' + str(Sample_Stat.get(sample).get('Suppl_Alignment_Alt')) if sample in Sample_dict.keys() else ':.'
-				# if opts.AlleleNotPaired:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iANP'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Paired_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Paired_Alt')) if sample in Sample_dict.keys() else ':.'
-				# if opts.AlleleNotProperPaired:
-				# 	variant[H_CHR.index('FORMAT')] += ':' + 'iANPP'
-				# 	for sample in Sample_tot:
-				# 		variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Not_Proper_Paired_Ref')) + ',' + str(Sample_Stat.get(sample).get('Not_Proper_Paired_Alt')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (Sample_Stat.get(sample).get('MapQ0_Ref'),Sample_Stat.get(sample).get('MapQ0_Alt')) if sample in Sample_dict.keys() else ':.'
 				if opts.AlleleClippedReads:
 					variant[H_CHR.index('FORMAT')] += ':' + 'iACR'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('Clipped_Reads_Ref')) + ',' + str(Sample_Stat.get(sample).get('Clipped_Reads_Alt')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s,%s' % (Sample_Stat.get(sample).get('Clipped_Reads_Ref'),Sample_Stat.get(sample).get('Clipped_Reads_Alt')) if sample in Sample_dict.keys() else ':.'
+				if opts.iClipRankSumTest:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iCRT'
+					for sample in Sample_tot:
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('ClipRankTest')) if sample in Sample_dict.keys() else ':.'
 				if opts.iBaseQualRankSumTest:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iQualRankTest'
+					variant[H_CHR.index('FORMAT')] += ':' + 'iQRT'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('QualRankTest')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('QualRankTest')) if sample in Sample_dict.keys() else ':.'
 				if opts.iMapQualRankSumTest:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iMapRankTest'
+					variant[H_CHR.index('FORMAT')] += ':' + 'iMRT'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('MappingRankTest')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('MappingRankTest')) if sample in Sample_dict.keys() else ':.'
 				if opts.iReadPosRankSumTest:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iPosRankTest'
+					variant[H_CHR.index('FORMAT')] += ':' + 'iPRT'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('PosaRankTest')) if sample in Sample_dict.keys() else ':.'
-				if opts.iAltMeanReadPos:
-					variant[H_CHR.index('FORMAT')] += ':' + 'iAltMeanPos'
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('PosaRankTest')) if sample in Sample_dict.keys() else ':.'
+				if opts.iAltNormReadPos:
+					variant[H_CHR.index('FORMAT')] += ':' + 'iANRP'
 					for sample in Sample_tot:
-						variant[H_CHR.index(sample)] += ':' + str(Sample_Stat.get(sample).get('iAltMeanPos')) if sample in Sample_dict.keys() else ':.'
+						variant[H_CHR.index(sample)] += ':%s' % (Sample_Stat.get(sample).get('iAltNormPos')) if sample in Sample_dict.keys() else ':.'
 
 				if opts.verbose:
 					if variant[H_CHR.index('#CHROM')] != CHR_Counter and CHR_Counter == '':
 						CHR_Counter = variant[H_CHR.index('#CHROM')]
-						print '\n' + 'Extracting attributes on: ' + str(CHR_Counter)
+						print '\n Extracting attributes on: %s' % (CHR_Counter)
 					if variant[H_CHR.index('#CHROM')] != CHR_Counter and CHR_Counter != '':
 						CHR_Counter = variant[H_CHR.index('#CHROM')]
-						print '\n' + 'Extracting attributes on: ' + str(CHR_Counter)
+						print '\n Extracting attributes on: %s' % (CHR_Counter)
 
 				out.write('\t'.join(variant) + '\n')

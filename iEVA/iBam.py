@@ -3,8 +3,9 @@ import scipy.stats as stats
 import iInfo
 #import multiprocessing
 import warnings
+import math
 
-def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SNVMinBaseQuality, SNVMinMappingQuality, IndelMinBaseQuality, IndelMinMappingQuality, Bam_opts, Genotype_opts):
+def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SNVMinBaseQuality, SNVMinMappingQuality, IndelMinBaseQuality, IndelMinMappingQuality, Bam_opts, Genotype_opts, opts):
 
 	CHR = variant[H_CHR.index('#CHROM')]
 	POS = int(variant[H_CHR.index('POS')])-1
@@ -16,18 +17,6 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 	STOP = int(variant[H_CHR.index('POS')]) + variant_lenght - 1
 
 	Sample_Stat = {}
-
-	# pool = multiprocessing.Pool(processes=4)
-	# results = [pool.apply(Prova_multirpocess, args=(CHR, POS, REF, ALT, variant_lenght, STOP, Sample_Stat, sample, variant, Sample_dict, H_CHR, Reference, Variant_Class, SNVMinBaseQuality, SNVMinMappingQuality, IndelMinBaseQuality, IndelMinMappingQuality, Bam_opts, Genotype_opts,)) for sample in Sample_dict.keys()]
-	# print results
-	# return Sample_Stat
-
-	#DA PROVARE UN MULTIPROCESS SULLE KEYS
-	#from multiprocessing import Pool
-	#p = Pool()                                   #number of processes = number of CPUs
-	#keys, values= zip(*d.iteritems())            #ordered keys and values
-	#processed_values= p.map( f, values )         #apply the function f to each set and wait for result
-	#then proceed to join the three sets
 
 	for sample in Sample_dict.keys():
 
@@ -42,11 +31,10 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		Reads_Info['Duplicate_reads'] = 0
 		Reads_Info['Not_Paired_Reads'] = 0
 		Reads_Info['Not_Proper_Paired_Reads'] = 0
-		#Reads_Info['Dup_Read_Alt'] = 0
-		#Reads_Info['Dup_Read_Ref'] = 0
 		Reads_Info['Alignment_Score'] = 0
 		Reads_Info['Suboptimal_Alignment_Score'] = 0
 		Reads_Info['Unmapped_reads'] = 0
+		Reads_Info['Mate_Unmapped'] = 0
 		Reads_Info['Total_Mapping_Quality'] = 0
 		Reads_Info['Mapping_Quality_Zero'] = 0
 		Reads_Info['Ref_Mapping_Quality'] = 0
@@ -66,24 +54,16 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		Reads_Info['ALT-'] = 0
 		Reads_Info['QCfail'] = 0
 
-		#Reads_Info['UnMap_Ref'] = 0
-		#Reads_Info['UnMap_Alt'] = 0
 		Reads_Info['MapQ0_Ref'] = 0
 		Reads_Info['MapQ0_Alt'] = 0
-		#Reads_Info['NPA_Ref'] = 0
-		#Reads_Info['NPA_Alt'] = 0
-		#Reads_Info['Suppl_Ref'] = 0
-		#Reads_Info['Suppl_Alt'] = 0
-		#Reads_Info['NP_Ref'] = 0
-		#Reads_Info['NP_Alt'] = 0
-		#Reads_Info['NPP_Ref'] = 0
-		#Reads_Info['NPP_Alt'] = 0
 		Reads_Info['AS_Ref'] = 0
 		Reads_Info['AS_Alt'] = 0
 		Reads_Info['XS_Ref'] = 0
 		Reads_Info['XS_Alt'] = 0
 		Reads_Info['XS0_Ref'] = 0
 		Reads_Info['XS0_Alt'] = 0
+		Reads_Info['BQAltAround'] = 0
+		Reads_Info['AltNormPos'] = 0
 
 		Reads_Info['QualRankRef'] = []
 		Reads_Info['QualRankAlt'] = []
@@ -91,32 +71,21 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		Reads_Info['MappingRankAlt'] = []
 		Reads_Info['PosRankRef'] = []
 		Reads_Info['PosRankAlt'] = []
-
+		Reads_Info['ClipRankRef'] = []
+		Reads_Info['ClipRankAlt'] = []
 
 
 		if Variant_Class == 'Alt' or Variant_Class == '.':
 
 			Reads_Info['Coverage'] = '.'
-			#Reads_Info['Dup_Read_Alt'] = '.'
-			#Reads_Info['Dup_Read_Ref'] = '.'
 			Reads_Info['Read_Ref'] = '.'
 			Reads_Info['Read_Alt'] = '.'
 			Reads_Info['Base_Alt_Qual'] = '.'
 			Reads_Info['Base_Ref_Qual'] = '.'
 			Reads_Info['Clipped_Reads_Ref'] = '.'
 			Reads_Info['Clipped_Reads_Alt'] = '.'
-			#Reads_Info['UnMap_Ref'] = '.'
-			#Reads_Info['UnMap_Alt'] = '.'
 			Reads_Info['MapQ0_Ref'] = '.'
 			Reads_Info['MapQ0_Alt'] = '.'
-			#Reads_Info['NPA_Ref'] = '.'
-			#Reads_Info['NPA_Alt'] = '.'
-			#Reads_Info['Suppl_Ref'] = '.'
-			#Reads_Info['Suppl_Alt'] = '.'
-			#Reads_Info['NP_Ref'] = '.'
-			#Reads_Info['NP_Alt'] = '.'
-			#Reads_Info['NPP_Ref'] = '.'
-			#Reads_Info['NPP_Alt'] = '.'
 			Reads_Info['AS_Ref'] = '.'
 			Reads_Info['AS_Alt'] = '.'
 			Reads_Info['XS_Ref'] = '.'
@@ -127,7 +96,7 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		bampile = pysam.AlignmentFile(Sample_dict.get(sample), "rb")
 
 		if any(Bam_opts) or any(Genotype_opts):
-			for pileupcolumn in bampile.pileup(CHR, POS, POS+1, stepper='nofilter'):
+			for pileupcolumn in bampile.pileup(CHR, POS, POS+1, stepper='nofilter', max_depth=opts.maxdepth):
 				if pileupcolumn.pos == POS:
 					for pileupread in pileupcolumn.pileups:
 						Reads_Info = iInfo.Extract_Reds_Info(pileupread, Reads_Info)
@@ -142,10 +111,9 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 										if pileupread.alignment.query_qualities[pileupread.query_position] < SNVMinBaseQuality \
 										or pileupread.alignment.mapping_quality < SNVMinMappingQuality or pileupread.alignment.is_duplicate:
 											continue
-										#elif pileupread.alignment.is_duplicate:
-										#	Reads_Info['Dup_Read_Alt'] += 1
+
 										else:
-											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match)
+											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match, STOP)
 
 									elif pileupread.alignment.query_sequence[pileupread.query_position] == REF:
 										
@@ -154,10 +122,9 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 										if pileupread.alignment.query_qualities[pileupread.query_position] < SNVMinBaseQuality \
 										or pileupread.alignment.mapping_quality < SNVMinMappingQuality or pileupread.alignment.is_duplicate:
 											continue
-										#elif pileupread.alignment.is_duplicate:
-										#	Reads_Info['Dup_Read_Ref'] += 1
+
 										else:
-											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match)
+											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match, STOP)
 
 							elif Variant_Class == 'Del':
 
@@ -192,10 +159,8 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 										or pileupread.alignment.mapping_quality < IndelMinMappingQuality or pileupread.alignment.is_duplicate:
 											continue
 
-										#elif pileupread.alignment.is_duplicate:
-										#	Reads_Info['Dup_Read_Alt'] += 1
 										else:
-											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match)
+											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match, STOP)
 
 									elif not pileupread.is_refskip and not pileupread.query_position == None \
 									and not pileupread.alignment.is_secondary and not pileupread.alignment.is_supplementary:
@@ -214,11 +179,7 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 											Not_Ref = True
 
 										if Not_Ref is False:
-											#if pileupread.alignment.is_duplicate:
-											#	Reads_Info['Dup_Read_Ref'] += 1
-
-											#else:
-											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match)
+											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match, STOP)
 
 
 							elif Variant_Class == 'Ins':
@@ -257,11 +218,8 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 										or pileupread.alignment.mapping_quality < IndelMinMappingQuality or pileupread.alignment.is_duplicate:
 											continue
 
-										#elif pileupread.alignment.is_duplicate:
-										#	Reads_Info['Dup_Read_Alt'] += 1
-
 										else:
-											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match)
+											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match, STOP)
 
 								elif len(Exact_Match) == 2:
 									if not pileupread.is_refskip and Exact_Match[0][0] is not None and Exact_Match[0][2].isupper() \
@@ -273,11 +231,8 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 										or pileupread.alignment.mapping_quality < IndelMinMappingQuality or pileupread.alignment.is_duplicate:
 											continue
 
-										#elif pileupread.alignment.is_duplicate:
-										#	Reads_Info['Dup_Read_Ref'] += 1
-
 										else:
-											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match)
+											Reads_Info = iInfo.Genotype_Reads_Info(pileupread, Reads_Info, Allele, Variant_Class, variant_lenght, Exact_Match, STOP)
 
 								else:
 									continue
@@ -294,18 +249,10 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 			Variant_Stat['Percentage_Unmapped_Reads'] = round(float(Reads_Info['Unmapped_reads'])/float(Reads_Info['Total_Reads_No_Dup']),4)
 		except:
 			Variant_Stat['Percentage_Unmapped_Reads'] = '.'
-		#try:
-		#	Variant_Stat['Percentage_Dup_Ref'] = round(float(Reads_Info['Dup_Read_Ref']) / float((Reads_Info['Dup_Read_Ref']+Reads_Info['Read_Ref'])),4)
-		#except:
-		#	Variant_Stat['Percentage_Dup_Ref'] = '.'
-		#try:
-		#	Variant_Stat['Percentage_Dup_Alt'] = round(float(Reads_Info['Dup_Read_Alt']) / float((Reads_Info['Dup_Read_Alt']+Reads_Info['Read_Alt'])),4)
-		#except:
-		#	Variant_Stat['Percentage_Dup_Alt'] = '.'
-		#try:
-		#	Variant_Stat['Delta_Duplicate'] = round(Variant_Stat['Percentage_Dup_Ref']-Variant_Stat['Percentage_Dup_Alt'],4)
-		#except:
-		#	Variant_Stat['Delta_Duplicate'] = '.'
+		try:
+			Variant_Stat['Mate_is_Unmapped'] = round(float(Reads_Info['Mate_Unmapped'])/float(Reads_Info['Total_Reads_No_Dup']),4)
+		except:
+			Variant_Stat['Mate_is_Unmapped'] = '0'
 		try:
 			Variant_Stat['Total_Duplicate_Reads'] = round(float(Reads_Info['Duplicate_reads'])/float(Reads_Info['Total_Reads_Unfilter']),4)
 		except:
@@ -339,7 +286,7 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		except:
 			Variant_Stat['Total_Mean_Mapping_Quality'] = '.'
 		try:
-			Variant_Stat['Coverage'] = int(Reads_Info['Read_Ref'])+int(Reads_Info['Read_Alt'])
+			Variant_Stat['Coverage'] = int(Reads_Info['Total_Reads_No_Dup'])
 		except:
 			Variant_Stat['Coverage'] = '.'
 		try:
@@ -351,9 +298,9 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		except:
 			Variant_Stat['Read_Alt'] = '.'
 		try:
-			oddsratio, SBR = stats.fisher_exact([[Reads_Info['REF+'], Reads_Info['REF-']], [Reads_Info['ALT+'], Reads_Info['ALT-']]])
+			Variant_Stat['Allele_Frequency'] = round(float(Reads_Info['Read_Alt'])/(float(Reads_Info['Read_Ref']+Reads_Info['Read_Alt'])),4)
 		except:
-			SBR = '.'
+			Variant_Stat['Allele_Frequency'] = '0'
 		try:
 			Variant_Stat['REF+'] = Reads_Info['REF+']
 		except:
@@ -371,10 +318,6 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		except:
 			Variant_Stat['ALT-'] = '.'
 		try:
-			Variant_Stat['Strand_Bias_Reads'] = round(SBR,4)
-		except:
-			Variant_Stat['Strand_Bias_Reads'] = '.'
-		try:
 			Variant_Stat['Qual_Alt'] = round(float(Reads_Info['Base_Alt_Qual'])/float(Reads_Info['Read_Alt']),2)
 		except:
 			Variant_Stat['Qual_Alt'] = '.'
@@ -382,14 +325,6 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 			Variant_Stat['Qual_Ref'] = round(float(Reads_Info['Base_Ref_Qual'])/float(Reads_Info['Read_Ref']),2)
 		except:
 			Variant_Stat['Qual_Ref'] = '.'
-		#try:
-		#	Variant_Stat['Number_Read_Dup_Alt'] = Reads_Info['Dup_Read_Alt']
-		#except:
-		#	Variant_Stat['Number_Read_Dup_Alt'] = '.'
-		#try:
-		#	Variant_Stat['Number_Read_Dup_Ref'] = Reads_Info['Dup_Read_Ref']
-		#except:
-		#	Variant_Stat['Number_Read_Dup_Ref'] = '.'
 		try:
 			Variant_Stat['Clipped_Reads_Ref'] = Reads_Info['Clipped_Reads_Ref']
 		except:
@@ -406,14 +341,6 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 			Variant_Stat['Alt_Mean_Mapping_Quality'] = round(float(Reads_Info['Alt_Mapping_Quality'])/float(Reads_Info['Read_Alt']),4)
 		except:
 			Variant_Stat['Alt_Mean_Mapping_Quality'] = '.'
-		#try:
-		#	Variant_Stat['UnMap_Ref'] = Reads_Info['UnMap_Ref']
-		#except:
-		#	Variant_Stat['UnMap_Ref'] = '.'
-		#try:
-		#	Variant_Stat['UnMap_Alt'] = Reads_Info['UnMap_Alt']
-		#except:
-		#	Variant_Stat['UnMap_Alt'] = '.'
 		try:
 			Variant_Stat['MapQ0_Ref'] = Reads_Info['MapQ0_Ref']
 		except:
@@ -422,38 +349,6 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 			Variant_Stat['MapQ0_Alt'] = Reads_Info['MapQ0_Alt']
 		except:
 			Variant_Stat['MapQ0_Alt'] = '.'
-		#try:
-		#	Variant_Stat['Not_Primary_Align_Ref'] = Reads_Info['NPA_Ref']
-		#except:
-		#	Variant_Stat['Not_Primary_Align_Ref'] = '.'
-		#try:
-		#	Variant_Stat['Not_Primary_Align_Alt'] = Reads_Info['NPA_Alt']
-		#except:
-		#	Variant_Stat['Not_Primary_Align_Alt'] = '.'
-		# try:
-		# 	Variant_Stat['Not_Paired_Ref'] = Reads_Info['NP_Ref']
-		# except:
-		# 	Variant_Stat['Not_Paired_Ref'] = '.'
-		# try:
-		# 	Variant_Stat['Not_Paired_Alt'] = Reads_Info['NP_Alt']
-		# except:
-		# 	Variant_Stat['Not_Paired_Alt'] = '.'
-		# try:
-		# 	Variant_Stat['Not_Proper_Paired_Ref'] = Reads_Info['NPP_Ref']
-		# except:
-		# 	Variant_Stat['Not_Proper_Paired_Ref'] = '.'
-		# try:
-		# 	Variant_Stat['Not_Proper_Paired_Alt'] = Reads_Info['NPP_Alt']
-		# except:
-		# 	Variant_Stat['Not_Proper_Paired_Alt'] = '.'
-		# try:
-		# 	Variant_Stat['Suppl_Alignment_Ref'] = Reads_Info['Suppl_Ref']
-		# except:
-		# 	Variant_Stat['Suppl_Alignment_Ref'] = '.'
-		# try:
-		# 	Variant_Stat['Suppl_Alignment_Alt'] = Reads_Info['Suppl_Alt']
-		# except:
-		# 	Variant_Stat['Suppl_Alignment_Alt'] = '.'
 		try:
 			Variant_Stat['AS_Ref'] = round(float(Reads_Info['AS_Ref'])/float(Reads_Info['Read_Ref']),3)
 		except:
@@ -479,61 +374,59 @@ def Sequence_Annotator(variant, Sample_dict, H_CHR, Reference, Variant_Class, SN
 		except:
 			Variant_Stat['XS0_Alt'] = '.'
 
-		#if 'opts.iBaseQualRankSumTest' in Genotype_opts:
+		if opts.StrandBias:
+			try:
+				oddsratio, SBR = stats.fisher_exact([[Reads_Info['REF+'], Reads_Info['REF-']], [Reads_Info['ALT+'], Reads_Info['ALT-']]])
+				Variant_Stat['Strand_Bias_Reads'] = round(1-SBR,3)
+			except:
+				Variant_Stat['Strand_Bias_Reads'] = '.'
+
+		if opts.iBaseQualRankSumTest:
+			try:
+				warnings.filterwarnings("ignore")
+				QualRank = stats.ranksums(Reads_Info['QualRankAlt'], Reads_Info['QualRankRef'])
+				Variant_Stat['QualRankTest'] = round(1-QualRank.pvalue,3) if math.isnan(QualRank.pvalue)==False else '.'
+			except:
+				Variant_Stat['QualRankTest'] = '.'
+
+		if opts.iMapQualRankSumTest:
+			try:
+				warnings.filterwarnings("ignore")
+				MappingRank = stats.ranksums(Reads_Info['MappingRankAlt'], Reads_Info['MappingRankRef'])
+				Variant_Stat['MappingRankTest'] = round(1-MappingRank.pvalue,3) if math.isnan(MappingRank.pvalue)==False else '.'
+			except:
+				Variant_Stat['MappingRankTest'] = '.'
+
+		if opts.iReadPosRankSumTest:
+			try:
+				warnings.filterwarnings("ignore")
+				PosRank = stats.ranksums(Reads_Info['PosRankAlt'], Reads_Info['PosRankRef'])
+				Variant_Stat['PosaRankTest'] = round(1-PosRank.pvalue,3) if math.isnan(PosRank.pvalue)==False else '.'
+			except:
+				Variant_Stat['PosaRankTest'] = '.'
+
+		if opts.iClipRankSumTest:
+			try:
+				warnings.filterwarnings("ignore")
+				ClipRank = stats.ranksums(Reads_Info['ClipRankAlt'], Reads_Info['ClipRankRef'])
+				Variant_Stat['ClipRankTest'] = round(1-ClipRank.pvalue,3) if math.isnan(ClipRank.pvalue)==False else '.'
+			except:
+				Variant_Stat['ClipRankTest'] = '.'
+
 		try:
-			warnings.filterwarnings("ignore")
-			QualRank = stats.ranksums(Reads_Info['QualRankAlt'], Reads_Info['QualRankRef'])
-			Variant_Stat['QualRankTest'] = QualRank.statistic
+			Variant_Stat['iAltNormPos'] = "{0:.2f}".format(Reads_Info['AltNormPos']/Reads_Info['Read_Alt'])
 		except:
-			Variant_Stat['QualRankTest'] = '.'
-
-		#if 'opts.iMapQualRankSumTest' in Genotype_opts:
-		try:
-			#warnings.filterwarnings("ignore")
-			MappingRank = stats.ranksums(Reads_Info['MappingRankAlt'], Reads_Info['MappingRankRef'])
-			Variant_Stat['MappingRankTest'] = MappingRank.statistic
-		except:
-			Variant_Stat['MappingRankTest'] = '.'
-
-		#if 'opts.iReadPosRankSumTest' in Genotype_opts:
-		try:
-			#warnings.filterwarnings("ignore")
-			PosRank = stats.ranksums(Reads_Info['PosRankAlt'], Reads_Info['PosRankRef'])
-			Variant_Stat['PosaRankTest'] = PosRank.statistic
-		except:
-			Variant_Stat['PosaRankTest'] = '.'
+			Variant_Stat['iAltNormPos'] = '.'
 
 		try:
-			Variant_Stat['iAltMeanPos'] = sum(Reads_Info['PosRankAlt'])/len(Reads_Info['PosRankAlt'])
+			Variant_Stat['BaseQualValAround'] = Reads_Info['BQAltAround']/Reads_Info['Read_Alt']
 		except:
-			Variant_Stat['iAltMeanPos'] = '.'
-
-		#SOSTITUIRE NAN
-
-		#print Variant_Stat['QualRankTest']
+			Variant_Stat['BaseQualValAround'] = '.'
 
 
-
-		#if Variant_Stat['Total_Duplicate_Reads'] != 0 and Variant_Stat['Total_Duplicate_Reads'] != 0.0:
-		#print CHR
-		#print POS
-		#print sample
-		#print Reads_Info['Base_Alt_Qual']
-		#	print Reads_Info['Dup_Read_Alt']
-		#	print Reads_Info['Dup_Read_Ref']
-		#	print Variant_Stat['Percentage_Dup_Ref']
-		#	print Variant_Stat['Percentage_Dup_Alt']
-		#	print Variant_Stat['Total_Duplicate_Reads']
-		#	#print Reads_Info['QCfail']
-		#	#print Variant_Stat['QualRankTest']
-		#	#print Variant_Stat['MappingRankTest']
-		#print '\n'
-
-		#print Variant_Stat['Total_Duplicate_Reads']
-
-		#INERISCI is_qcfail per failing vendor
 
 		Sample_Stat[sample] = Variant_Stat
 		Reads_Info = {}
+		bampile.close()
 
 	return Sample_Stat
