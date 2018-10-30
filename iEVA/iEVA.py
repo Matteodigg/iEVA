@@ -30,7 +30,8 @@ if __name__ == '__main__':
 	Sequence.add_argument('-iPNC','--PseudoNucleotidesComposition',action="store_true",help="Describe nucleotide sequence using Pseudo Nucleotide Composition with Kmer size of 2. Values reported as: AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT")
 	Sequence.add_argument('-iRM','--RepeatMasker',action="store_true",help="Check from fasta reference if a variant falls in a sequence flagged as repeated sequence by RepeatMasker tool.")
 	Sequence.add_argument('-iGC','--gcContent',action="store_true",help="Percentage of sequence GC content.")
-	Sequence.add_argument('-iVC','--VariantClass',action="store_true",help="Annotated variant class: SNV (snv), Insertion (Ins), Deletion (Del), Sequence Alteration (Alt)")	
+	Sequence.add_argument('-iVC','--VariantClass',action="store_true",help="Annotated variant class: SNV (snv), Insertion (Ins), Deletion (Del), Sequence Alteration (Alt)")
+	Sequence.add_argument('-AS','--AllSequence',action="store_true",help="To extract all Sequence features.")	
 	
 	Bam = parser.add_argument_group(description='Bam extraction arguments')
 	Bam.add_argument('-iUnMap','--UnMappedReads', action="store_true",help="Fraction of unmapped reads for variant position.")
@@ -44,6 +45,7 @@ if __name__ == '__main__':
 	Bam.add_argument('-iAS','--AlignmentScore',action="store_true",help="Mean Alignment Score (AS tag in bam file) of reads mapping position.")
 	Bam.add_argument('-iXS','--SuboptimalAlignmentScore',action="store_true",help="Mean Suboptimal Alignment Score (XS tag in bam file) of reads mapping position")
 	Bam.add_argument('-iDUP','--TotalDupReads',action="store_true",help="Fraction of total reads mapping position marked as duplicate.")
+	Bam.add_argument('-AB','--AllBam',action="store_true",help="To extract all Bam features.")
 
 	Genotype = parser.add_argument_group(description='Genotype extraction arguments')
 	Genotype.add_argument('-iDP','--iEvaDepth',action="store_true",help="iEVA read depth for variant position. Only proper paired, proper mapped and not duplicate reads are included.")
@@ -64,27 +66,29 @@ if __name__ == '__main__':
 	Genotype.add_argument('-iMRT','--iMapQualRankSumTest',action="store_true",help="Mann-Whitney Rank sum test for difference between in mapping quality of reads of variants from Ref and Alt (1 - p-value). 0 is balanced, 1 means there is bias")
 	Genotype.add_argument('-iPRT','--iReadPosRankSumTest',action="store_true",help="Mann-Whitney Rank sum test for difference between in positions of variants in reads from Ref and Alt (1 - p-value). 0 is balanced, 1 means there is bias")
 	Genotype.add_argument('-iANRP','--iAltNormReadPos',action="store_true",help="Mean read position of variant normalized on read length. [0-1] 1 means that variant falls at the beginning/end of read, 0 indicating variant falls in the middle of the read. (Useful in Amplicon analysis)")
-
+	Genotype.add_argument('-AG','--AllGenotype',action="store_true",help="To extract all Genotype features.")
 	global opts
 	opts = parser.parse_args()
 
 	#Define options to speedup processing time
+	iCheck.Check_All(opts)
+
+	Sequence_opts = [opts.SimpleRepeat, opts.SimpleRepeatUnit, opts.SimpleRepeatLength,
+					opts.RepeatMasker, opts.PseudoNucleotidesComposition, opts.gcContent, opts.SimpleRepeatList, opts.VariantClass]
+
+	Bam_opts = [opts.NotPrimaryAlignment, opts.MeanMappingQuality, opts.SuboptimalAlignmentScore,
+				opts.SupplementaryAlignment, opts.AlignmentScore, opts.MappingQualityZero, opts.MateIsUnmapped,
+				opts.NotProperPairedReads, opts.NotPairedReads, opts.UnMappedReads, opts.TotalDupReads]
+
 	Genotype_opts = [opts.AlleleDepth, opts.AlleleQscore, opts.AlleleMeanMappingQuality, opts.AlleleSuboptimalAlignmentScore,
 					opts.AlleleMappingQualityZero, opts.iEvaDepth, opts.AlleleClippedReads, opts.AlleleMeanAlignmentScore,
 					opts.AlleleSuboptimalAlignmentScoreZero, opts.StrandBias, opts.StrandBiasDepth, opts.iBaseQualRankSumTest,
 					opts.iMapQualRankSumTest, opts.iReadPosRankSumTest, opts.iAltNormReadPos, opts.iClipRankSumTest,
 					opts.iBaseQualValAround, opts.AlleleFrequency]
 
-	Bam_opts = [opts.NotPrimaryAlignment, opts.MeanMappingQuality, opts.SuboptimalAlignmentScore,
-				opts.SupplementaryAlignment, opts.AlignmentScore, opts.MappingQualityZero, opts.MateIsUnmapped,
-				opts.NotProperPairedReads, opts.NotPairedReads, opts.UnMappedReads, opts.TotalDupReads]
-
-	Sequence_opts = [opts.SimpleRepeat, opts.SimpleRepeatUnit, opts.SimpleRepeatLength,
-					opts.RepeatMasker, opts.PseudoNucleotidesComposition, opts.gcContent, opts.SimpleRepeatList]
-
 	#Check parameters in command line option
-	iCheck.Check_Parameters('-WS, --WindowSize',opts.WindowSize,20,600)
-	iCheck.Check_SimpleRepeatList('-SRList, --SimpleRepeatList',opts)
+	iCheck.Check_Parameters('-WS, --WindowSize', opts.WindowSize,20,600)
+	iCheck.Check_SimpleRepeatList('-SRList, --SimpleRepeatList', opts)
 	iCheck.Check_list(opts, Bam_opts, Genotype_opts)
 
 	out = open(opts.outfile,'w')
@@ -96,6 +100,8 @@ if __name__ == '__main__':
 
 	#Write output vcf header
 	iEVA_Header, Head_CHR = vcfwriter.iHeader(Header, H_CHR, opts)
+
+	print '\nExatraction: %s' % (opts.input)
 
 	if opts.SimpleRepeatList:
 		with open(opts.SimpleRepeatList) as repeat_list:
@@ -117,4 +123,4 @@ if __name__ == '__main__':
 
 	out.close()
 
-	print '\nExatraction: Done\n'
+	print 'Exatraction: Done\n'

@@ -19,7 +19,7 @@ setup(
     license = 'MIT',
     description = description,
     long_description = long_description,
-    author = 'Matteo Di Giovannantonio',
+    author = 'Matteo Di Giovannantonio & Mario Urtis',
     author_email = 'matteodeg@gmail.com',
     packages = ['iEVA'],
     install_requires = requirements,

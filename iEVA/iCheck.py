@@ -65,3 +65,50 @@ def Check_list(opts,Bam_opts,Genotype_opts):
 			pass
 		else:
 			sys.exit('\nTo Enable bam features insert path to bam list with command -L (--list)\n')
+
+def Check_All(opts):	
+
+	if opts.AllSequence:
+		opts.SimpleRepeat = True
+		opts.SimpleRepeatUnit = True
+		opts.SimpleRepeatLength = True
+		opts.RepeatMasker = True
+		opts.PseudoNucleotidesComposition = True
+		opts.gcContent = True
+		opts.VariantClass = True
+
+	if opts.AllBam:
+		opts.NotPrimaryAlignment = True
+		opts.MeanMappingQuality = True
+		opts.SuboptimalAlignmentScore = True
+		opts.SupplementaryAlignment = True
+		opts.AlignmentScore = True
+		opts.MappingQualityZero = True
+		opts.MateIsUnmapped = True
+		opts.NotProperPairedReads = True
+		opts.NotPairedReads = True
+		opts.UnMappedReads = True
+		opts.TotalDupReads = True
+
+	if opts.AllGenotype:	
+		opts.AlleleDepth = True
+		opts.AlleleQscore = True
+		opts.AlleleMeanMappingQuality = True
+		opts.AlleleSuboptimalAlignmentScore = True
+		opts.AlleleMappingQualityZero = True
+		opts.iEvaDepth = True
+		opts.AlleleClippedReads = True
+		opts.AlleleMeanAlignmentScore = True
+		opts.AlleleSuboptimalAlignmentScoreZero = True
+		opts.StrandBias = True
+		opts.StrandBiasDepth = True
+		opts.iBaseQualRankSumTest = True
+		opts.iMapQualRankSumTest = True
+		opts.iReadPosRankSumTest = True
+		opts.iAltNormReadPos = True
+		opts.iClipRankSumTest = True
+		opts.iBaseQualValAround = True
+		opts.AlleleFrequency = True
+		
+
+	
