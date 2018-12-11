@@ -1,0 +1,14 @@
+README.rst
+setup.py
+iEVA/__init__.py
+iEVA/iBam.py
+iEVA/iCheck.py
+iEVA/iEVA.py
+iEVA/iInfo.py
+iEVA/iSequence.py
+iEVA/vcfwriter.py
+iEVA.egg-info/PKG-INFO
+iEVA.egg-info/SOURCES.txt
+iEVA.egg-info/dependency_links.txt
+iEVA.egg-info/requires.txt
+iEVA.egg-info/top_level.txt
