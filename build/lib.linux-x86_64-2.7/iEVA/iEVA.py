@@ -16,7 +16,7 @@ if __name__ == '__main__':
 
 	Optional = parser.add_argument_group(description='Optional arguments')
 	Optional.add_argument('-MaxDepth','--maxdepth',default=10000,type=int,help="Maximum read depth for pysam. Default limit is 10000")
-	Optional.add_argument('-WS','--WindowSize',default=40, type=int, metavar='[20-600]',help="Set window size for -iSR -iSRL -iGC and -iPNC command. Default=40, Min=20, Max=600")
+	Optional.add_argument('-WS','--WindowSize',default=40, type=int, metavar='[20-600]',help="Set window size for -SR -SRL -GC and -PNC command. Default=40, Min=20, Max=600")
 	Optional.add_argument('-SNVmbq','--SNVMinBaseQuality',default=12,type=int,metavar='[0-66]',help="Minimum Base Quality threshold for base supporting SNV position. Used on Genotype exatrction arguments. Default=12")
 	Optional.add_argument('-SNVmmq','--SNVMinMappingQuality',default=30,type=int,metavar='[0-60]',help="Minimum Mapping Quality threshold for reads supporting SNV position. Used on Genotype exatrction arguments. Default=30")
 	Optional.add_argument('-INDELmbq','--IndelMinBaseQuality',default=10,type=int,metavar='[0-66]',help="Minimum Base Quality threshold for base supporting InDel position. Used on Genotype exatrction arguments. Default=10")
@@ -25,7 +25,7 @@ if __name__ == '__main__':
 	Sequence = parser.add_argument_group(description='Reference.fasta extraction arguments')
 	Sequence.add_argument('-iSR','--SimpleRepeat',action="store_true",help="Enable Simple Repeat Finder. Check if a variant falls in a Simple Repeated Sequence. 0 for None, 1 for Simple Repeat Sequence, 2 for Homopolymer.")
 	Sequence.add_argument('-SRList','--SimpleRepeatList', metavar='path/to/SampleRepeatList.txt',help="path to list containing simple repeated sequence (one for each raw) to extract with iEVA. If enabled, only reported sequences in file will be extracted. -SR option is required.")
-	Sequence.add_argument('-iSRL','--SimpleRepeatLength',action="store_true",help="Report length of repeated sequence (expressed as number of nucleotides) in -iSR option")
+	Sequence.add_argument('-iSRL','--SimpleRepeatLength',action="store_true",help="Report length of repeated sequence (expressed as number of nucleotides) in -SR option")
 	Sequence.add_argument('-iSRU','--SimpleRepeatUnit',action="store_true",help="Report repeated sequence unit composing simple repeated sequence")
 	Sequence.add_argument('-iPNC','--PseudoNucleotidesComposition',action="store_true",help="Describe nucleotide sequence using Pseudo Nucleotide Composition with Kmer size of 2. Values reported as: AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT")
 	Sequence.add_argument('-iRM','--RepeatMasker',action="store_true",help="Check from fasta reference if a variant falls in a sequence flagged as repeated sequence by RepeatMasker tool.")
