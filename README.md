@@ -1,2 +1,2 @@
 # iEVA
-identification and Ectraction of VariantAttributes
+identification and Extraction of Variant Attributes
