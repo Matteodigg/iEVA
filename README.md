@@ -1003,7 +1003,7 @@ Number of clipped reads mapping *REF* allele in `iRR`. iEVA filters all reads fl
 
 Number of clipped reads mapping *ALT* allele in `iRA`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
-## References
+# References
 
 1. Kieleczawa J. Fundamentals of Sequencing of Difficult Templates—An Overview. Journal of Biomolecular Techniques : JBT. 2006;17(3):207-217. [PubMed PMID: 16870712](https://www.ncbi.nlm.nih.gov/pubmed/16870712).
 
