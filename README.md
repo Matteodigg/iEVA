@@ -16,15 +16,32 @@ iEVA is a python based command line tool that enables users to:
 2. Include external sequence-specific information including features from fasta reference file such as conservation score of the sequence, GC content, homopolymer content etc.
 3. Generate a merged VCF file containing all the annotation from EACH input vcf file, conserving all the useful annotation derived from each variant caller, in addition to additional information explained above.
 
+.. _installation:
+
 Installation
-------------
-To install iEVA, clone or download from git: ::
+============
 
-	$ git clone https://github.com/Matteodigg/iEVA
+*iEVA* is a command line tool developed in python 2.7. To install iEVA digit in your terminal window: ::
 
-``cd`` in iEVA directory and execute: ::
+    $ git clone https://github.com/Matteodigg/iEVA
 
-	$ sudo python setup.py install
+or download it from https://github.com/Matteodigg/iEVA.
+
+Enter in *iEVA* directory and execute: ::
+
+    $ python setup.py install
+
+Done! iEVA is installed in ``/usr/local/bin``. To use iEVA, simply type: ::
+
+    $ iEVA -I path/to/input.vcf -O path/to/output.vcf -Ref path/to/reference.fasta -[Arg1] ...
+
+Detailed explanation of iEVA command line arguments can be found in :ref:`iEVA arguments <options>` section.
+
+.. seealso::
+
+    If problem occurs installing python modules in :file:`REQUIREMENTS` file, please refers to `module homepage <http://pypi.python.org/pypi>`_ and try to install them separately using pypi::
+
+     $ pip install module_name
 
 
 Quickstart
