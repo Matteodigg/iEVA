@@ -70,7 +70,7 @@ See :ref:`iEVA arguments <options>` for details about iEVA options and :ref:`Tut
 
 One of the strengths of iEVA consists in its simplicity of integration in bioinformatics pipeline, as showed in this figure:
 
-# ![workflow](/docs/source/Workflow-iEVA.PNG)
+[workflow](/docs/source/Workflow-iEVA.PNG)
 
 Quickstart
 ----------
