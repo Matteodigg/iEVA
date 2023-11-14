@@ -39,91 +39,80 @@ Detailed explanation of iEVA command line arguments can be found in the [iEVA ar
 >
 >     $ pip install module_name
 
-Introduction
-============
+# Introduction
 
-iEVA is a python command line tool that expands the number of informative attributes that are not commonly provided by variant callers. It needs as input a ``.vcf`` file from variant calling and generates as output a new vcf file enriched with all extracted information.
+iEVA is a Python command line tool that expands the number of informative attributes that are not commonly provided by variant callers. It requires a `.vcf` file from variant calling and generates a new enriched vcf file as output.
 
-iEVA attributes are annotated in *INFO* and *FORMAT* field of vcf output file (see https://samtools.github.io/hts-specs/VCFv4.2.pdf for *vcf* specification). iEVA extracts information for variant in input vcf file from two different sources:
+iEVA attributes are annotated in the *INFO* and *FORMAT* fields of the vcf output file (see [vcf specification](https://samtools.github.io/hts-specs/VCFv4.2.pdf)). iEVA extracts information for the variant in the input vcf file from two different sources:
 
-1. **Reference.fasta file**. Nucleotide sequence composition around a called variant is extracted from the fasta reference file. The annotations are reported in vcf *INFO* field.
+1. **Reference.fasta file**: Nucleotide sequence composition around a called variant is extracted from the fasta reference file. The annotations are reported in the vcf *INFO* field.
+2. **BAM file**: Information about reads mapping variant position, for samples in the vcf input file, is extracted from the bam file. The annotations are reported in the vcf *FORMAT* field.
 
-2. **BAM file**. Information about reads mapping variant position, for sample in vcf input file, is extracted from bam file. The annotations are reported in vcf *FORMAT* field.
+With iEVA, you can:
+- Report the reference sequence quality in terms of G-C content, repeated sequences, pseudo nucleotide composition, and more.
+- Report genotype information for samples in the vcf file. You can extract useful information for each sample, like fraction of unmapped reads, not paired reads, duplicate reads, etc.
+- Report *allele-specific* information, evaluating, for example, the number of reads supporting reference or alternate allele given a specific mapping quality or base quality threshold. These attributes help identify any bias affecting called variants.
 
-iEVA enriches vcf file with several attributes. With iEVA you can:
+Main advantages of iEVA:
+- The output file is in vcf format. iEVA simply adds the extracted attributes, maintaining original tags in the input vcf file.
+- Extraction is independent of the variant caller used in variant calling analysis. For proper usage of iEVA, see [Usage](#how_to) and [Prerequisites](#Prereq).
+- iEVA is not a variant caller, saving time. However, its computational time depends on the number of requested samples for extraction, target length, and mean target coverage.
 
-* Report the reference sequence quality in terms of G-C content, repeated sequences, pseudo nucleotide composition and more over. 
-* Report genotype information for samples in vcf file. You can extract, for each sample, useful information like fraction of unmapped reads, not paired reads, duplicate reads, etc.\.\.
-* Report *allele-specific* information, by evaluating, for example, number of reads supporting reference or alternate allele given a specific mapping quality or base quality threshold. These attributes help to identify any bias affecting called variants.
+See [iEVA arguments](#options) for details about iEVA options and the [Tutorial and examples](#ex) section.
 
-Main advatages of iEVA are:
+One of the strengths of iEVA is its simplicity of integration into bioinformatics pipelines, as shown in this figure:
+![workflow](/docs/source/Workflow-iEVA.PNG)
 
-* Output file in a vcf format file. iEVA simply adds the extracted attributes, maintaining original tags in input vcf file.
-* Extraction is independent of the variant caller used in variant calling analysis. To a proper usage of iEVA look at :ref:`Usage <how_to>` and :ref:`Prerequisites <Prereq>`.
-* iEVA is not a variant caller, for this reason is a safe-time approach. However, its computational time increases depending both on the number of requested sample for extraction, target length and mean target coverage.
 
-See :ref:`iEVA arguments <options>` for details about iEVA options and :ref:`Tutorial and examples <ex>` section.
+# Usage
 
-One of the strengths of iEVA consists in its simplicity of integration in bioinformatics pipeline, as showed in this figure:
-
-[workflow](/docs/source/Workflow-iEVA.PNG)
-
-Usage
-=====
-
-iEVA requires three arguments in order to extract attributes from reference.fasta file:
+iEVA requires three arguments to extract attributes from the reference.fasta file:
 
     $ iEVA -I path/to/input.vcf -Ref path/to/reference.fasta -O path/to/out.vcf -[opts]
 
-An additional argument is required to extract attributes from bam file:
+An additional argument is required to extract attributes from the bam file:
 
     $ iEVA -I path/to/input.vcf -Ref path/to/reference.fasta -L path/to/Bam_list -O path/to/out.vcf -[opts]
 
-:file:`Bam_list` file contains path to sample/s bam file in *--input* argument. One for each raw:
+The `Bam_list` file contains paths to each sample's bam file listed in the `--input` argument, one per line:
 
     path/to/Sample1.bam
     path/to/Sample2.bam
-    .
-    .
-    .
+    ...
 
-Index :file:`.bai` is required to be in same path of :file:`.bam` file.
+An index `.bai` file is required to be in the same path as the `.bam` file.
 
-.. Note:
+> **Note:**
+>
+> If you are running the `pyfasta` module on `reference.fasta` for the first time, it will take some time to write the index file.
 
-    If you are running for the first time :class:`pyfasta` module on :file:`reference.fasta`, it is going to take some time to write index file.
+# Prerequisites
 
-Prerequisites
--------------
-
-For a proper usage, iEVA meets the following prerequisites:
+For proper usage, iEVA meets the following prerequisites:
 
 1. **Vcf normalization**:
-    |    Actual iEVA release does not extract any allele-specific attribute on multi-allelic sites with multiple values in vcf *ALT* field.
-    |    In addition, it is considered a good standard to *normalize* and *left-align* a vcf file after variant calling. Further details about *normalization* `here <http://genome.sph.umich.edu/wiki/Variant_Normalization>`_.
+    - Actual iEVA release does not extract any allele-specific attribute on multi-allelic sites with multiple values in vcf *ALT* field.
+    - It is considered a good standard to *normalize* and *left-align* a vcf file after variant calling. Further details about *normalization* can be found [here](http://genome.sph.umich.edu/wiki/Variant_Normalization).
 
-    You can normalize and split multi-allelic sites in vcf file, before using iEVA, with `bcftools norm <https://samtools.github.io/bcftools/bcftools.html>`_ using the following command line option:
+    You can normalize and split multi-allelic sites in a vcf file, before using iEVA, with [bcftools norm](https://samtools.github.io/bcftools/bcftools.html) using the following command line option:
 
         $ bcftools norm -m -both -f reference.fasta INPUT.vcf > OUTPUT.split-and-norm.vcf
 
 2. **Bam header and sample name**:
-    |    To use *bam extraction*, sample name in vcf *genotype* field need to be the same of :class:`RG:SM` tag in bam file.
-    |    To modify bam header sample name, you can use `Picard tool <https://broadinstitute.github.io/picard/command-line-overview.html#AddOrReplaceReadGroups>`_ or `Samtools <http://www.htslib.org/doc/samtools.html>`_.
+    - To use *bam extraction*, the sample name in the vcf *genotype* field needs to be the same as the `RG:SM` tag in the bam file.
+    - To modify the bam header sample name, you can use [Picard tool](https://broadinstitute.github.io/picard/command-line-overview.html#AddOrReplaceReadGroups) or [Samtools](http://www.htslib.org/doc/samtools.html).
 
+> **Warning:**
+>
+> iEVA informs about extraction progress with the `--verbose` option. To use this argument, you have to **sort** the vcf file.
 
-.. warning:
-    iEVA informs about extraction progress with :class:`--verbose` option. To use this argument, you have to **sort** vcf file.
+# Tutorial and Examples
 
-Tutorial and examples
-=====================
+This is the tutorial for iEVA. A detailed [argument description](#options) is available.
 
-This is the tutorial for iEVA. Detailed :ref:`argument description <options>` is available.
+Starting from a `Test-norm.vcf` normalized file, a `ucsc.hg19.fasta` reference, and a `bamlist.txt`, let's take a look at how to use iEVA.
 
-Strating from a :file:`Test-norm.vcf` normalized file, a :file:`ucsc.hg19.fasta` reference and a :file:`bamlist.txt`, let's take a look at how to use iEVA.
-
-
-Extracting attributes from fasta reference
-------------------------------------------
+## Extracting Attributes from fasta Reference
 
 Given an input vcf file from a variant caller containing these variants:
 
@@ -163,10 +152,11 @@ we verify if any variant falls in a repeated sequence, reporting its length and 
 
         Exatraction: Done
 
-.. note:
-    To extract only sequence features, argument :class:`-L` for bam list is not required.
+> note:
+> 
+> To extract only sequence features, argument `-L` for bam list is not required.
 
-Output file :file:`iEVA-Test.vcf` is now annotated as follow in *INFO* field:
+Output file `iEVA-Test.vcf` is now annotated as follow in *INFO* field:
 
     ##fileformat=VCFv4.2
     ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
@@ -190,13 +180,13 @@ Output file :file:`iEVA-Test.vcf` is now annotated as follow in *INFO* field:
     chr9	137688780	.	GCCTGTCCCCTCCAAAACCCA	G	.	.	AC=3;AF=0.75;AN=4;DP=226;SR=0;SRL=.;SRU=.;RM=0	GT:AD:DP:GQ	0/1:37,47:84:99	1/1:2,39:41:78
     chr18	28669664	.	CTTAA	C	.	.	AC=1;AF=0.25;AN=4;DP=84;SR=0;SRL=.;SRU=.;RM=0	GT:AD:DP:GQ	0/0:45,0:45:99	0/1:13,22:35:99
 
-You can observe that two variants have been found to be in a repeated sequence: a simple repeated sequence (:class:`SR=1` composed by TA nucleotides repetitions for a total lenght :class:`SRL=22`) and a homopolymer sequence (:class:`SR=2` of nucleotide T with total length :class:`SRL=16`), respectively.
+You can observe that two variants have been found to be in a repeated sequence: a simple repeated sequence (`SR=1` composed by TA nucleotides repetitions for a total lenght `SRL=22`) and a homopolymer sequence (`SR=2` of nucleotide T with total length `SRL=16`), respectively.
 
-Try to add other information about sequence nucleotide composition using *Pseudo Nucleotide Composition*, *GC* content and reporting *variant class*. Use as input the previous annotated output :file:`iEVA-Test.vcf` by simply adding requested arguments:
+Try to add other information about sequence nucleotide composition using *Pseudo Nucleotide Composition*, *GC* content and reporting *variant class*. Use as input the previous annotated output `iEVA-Test.vcf` by simply adding requested arguments:
 
     $ iEVA -v -I Test-norm.vcf -O iEVA-Test.vcf -Ref ucsc.hg19.fasta -SR -SRL -RM -PNC -GC -WS 300 -VC
 
-Alternatively, you can use as input the previous annotated output :file:`iEVA-Test.vcf` by simply adding requested arguments as follow:
+Alternatively, you can use as input the previous annotated output `iEVA-Test.vcf` by simply adding requested arguments as follow:
 
     $ iEVA -v -I iEVA-Test.vcf -O iEVA-Test-PNC-GC-VC.vcf -Ref ucsc.hg19.fasta -PNC -GC -WS 300 -VC
 
@@ -240,17 +230,16 @@ In both cases, we have this output file:
     chr9	137688780	.	GCCTGTCCCCTCCAAAACCCA	G	.	.	AC=3;AF=0.75;AN=4;DP=226;SR=0;SRL=.;PNC=0.053,0.047,0.067,0.017,0.063,0.16,0.023,0.093,0.063,0.06,0.11,0.047,0.007,0.073,0.077,0.04;RM=0;GC=61.794;VC=Del	GT:AD:DP:GQ	0/1:37,47:84:99	1/1:2,39:41:78
     chr18	28669664	.	CTTAA	C	.	.	AC=1;AF=0.25;AN=4;DP=84;SR=0;SRL=.;PNC=0.12,0.02,0.087,0.143,0.057,0.023,0.003,0.037,0.063,0.033,0.027,0.047,0.13,0.043,0.053,0.113;RM=0;GC=28.904;VC=Del	GT:AD:DP:GQ	0/0:45,0:45:99	0/1:13,22:35:99
 
-Extracting Sample level informations
-------------------------------------
+## Extracting Sample level informations
 
 As concern sample level extraction, we are going to test different attributes on genotype field ``Sample-01`` and ``Sample-02`` of vcf file.
 
-Write a :file:`Bamlist.txt` file with bam path of those samples, one for each raw:
+Write a `Bamlist.txt` file with bam path of those samples, one for each raw:
 
     path/to/Sample-01.bam
     path/to/Sample-02.bam
 
-iEVA allows to check the overall quality of a called variants using information stored in sample bam file. For example, try to extract some reads information for each sample like fraction of unmapped reads, not paired reads, not proper paired reads, mapping quality 0 reads, strand bias in reads orientation and duplicate reads with :class:`-UnMap`, :class:`-NP`, :class:`-NPP`, :class:`-MQ0`, :class:`-SBR` and :class:`-TDR` options:
+iEVA allows to check the overall quality of a called variants using information stored in sample bam file. For example, try to extract some reads information for each sample like fraction of unmapped reads, not paired reads, not proper paired reads, mapping quality 0 reads, strand bias in reads orientation and duplicate reads with `-UnMap`, `-NP`, `-NPP`, `-MQ0`, `-SBR` and `-TDR` options:
 
     $ iEVA -v -I iEVA-Test.vcf -O iEVA-Test-02.vcf -Ref ucsc.hg19.fasta -L Bamlist.txt -UnMap -NP -NPP -TDR -MQ0 -SBR
 
@@ -316,7 +305,7 @@ In the following example we are going to extract attributes on genotype field. F
 
     Exatraction: Done
 
-We get this output :file:`iEVA-Test-03.vcf` file:
+We get this output `iEVA-Test-03.vcf` file:
 
     ##fileformat=VCFv4.2
     ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
@@ -352,10 +341,11 @@ We get this output :file:`iEVA-Test-03.vcf` file:
 
 Now, we are going to look at some other interesting allele specific options.
 
-For example, try to extract information about fraction of clipped reads for *REF* and *ALT* allele. Moreover, we want to check if duplicate reads supporting reference and alternate allele are well-balanced or bias affected. So, try to add :class:`-iCR` and :class:`-iCA` for clipped reads information and :class:`-iDR`, :class:`-iDA` and its difference :class:`-iDDup` for duplicate reads with default values for mapping and base quality threshold.
+For example, try to extract information about fraction of clipped reads for *REF* and *ALT* allele. Moreover, we want to check if duplicate reads supporting reference and alternate allele are well-balanced or bias affected. So, try to add `-iCR` and `-iCA` for clipped reads information and `-iDR`, `-iDA` and its difference `-iDDup` for duplicate reads with default values for mapping and base quality threshold.
 
-.. warning:
-    Remember that optional arguments for :ref:`base quality threshold <SNVmbq>` and :ref:`mapping quality threshold <SNVmmq>` affect all the *allele-specific* arguments. In this case, default values will be used.
+> *Warning*
+>
+> Remember that optional arguments for base quality threshold `SNVmbq` and mapping quality threshold `SNVmmq` affect all the *allele-specific* arguments. In this case, default values will be used.
 
     $ iEVA -v -I iEVA-Test-03.vcf -O iEVA-Test-04.vcf -Ref ucsc.hg19.fasta -L Bamlist.txt -iCR -iCA -iDR -iDA -iDDup
 
@@ -373,7 +363,7 @@ For example, try to extract information about fraction of clipped reads for *REF
 
     Exatraction: Done
 
-This is the output :file:`iEVA-Test-04.vcf` vcf file:
+This is the output `iEVA-Test-04.vcf` vcf file:
 
     ##fileformat=VCFv4.2
     ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
@@ -412,7 +402,7 @@ This is the output :file:`iEVA-Test-04.vcf` vcf file:
     chr9	137688780	.	GCCTGTCCCCTCCAAAACCCA	G	.	.	AC=3;AF=0.75;AN=4;DP=226;SR=0;SRL=.;RM=0;VC=Del	GT:AD:DP:GQ:SBR:UnMap:MQ0:NP:NPP:TDR:iDP:iAD:iQR:iQA:iDR:iDA:iDDup:iCR:iCA	0/1:37,47:84:99:0.7298:0:0:0:0:0.0828:48:21,27:31.01:31.89:0.0435:0.0882:-0.0447:0:0	1/1:2,39:41:78:0.0956:0:0:0:0:0.0408:37:0,37:.:32.0:.:0.025:.:.:0.1795
     chr18	28669664	.	CTTAA	C	.	.	AC=1;AF=0.25;AN=4;DP=84;SR=0;SRL=.;RM=0;VC=Del	GT:AD:DP:GQ:SBR:UnMap:MQ0:NP:NPP:TDR:iDP:iAD:iQR:iQA:iDR:iDA:iDDup:iCR:iCA	0/0:45,0:45:99:0.1448:0:0:0:0.0135:0.039:65:65,0:31.42:.:0.0441:.:.:0:.	0/1:13,22:35:99:0.0456:0:0:0:0:0.0714:34:13,21:32.0:32.74:0.1333:0.0455:0.0878:0:0
 
-Finally, try to extract attributes both from reference fasta file and bam file only for ``Sample-01``. In this case, simply remove ``Sample-02`` bam file from :file:`Bamlist.txt`. Missing values for ``Sample-02`` are indicated by a ``.`` for all requested optional arguments.
+Finally, try to extract attributes both from reference fasta file and bam file only for `Sample-01`. In this case, simply remove `Sample-02` bam file from `Bamlist.txt`. Missing values for `Sample-02` are indicated by a `.` for all requested optional arguments.
 
     $ iEVA -v -I Test-norm.vcf -O iEVA-Test-Only-Sample-01.vcf -Ref ucsc.hg19.fasta -L Bamlist.txt -SR -SRL -RM -GC -WS 300 -AS -UnMap -SA -DDup -iDP -iAD -iQR -iQA -iRMQ -iAMQ
 
@@ -521,7 +511,7 @@ A really important feature of iEVA is its flexibility and usage on more variant 
     chr9	137688780	.	GCCTGTCCCCTCCAAAACCCA	G	795	.	AC=2;AF=0.5;AN=4;DP=120;QA=1612;QR=787;TYPE=del	GT:GQ:DP:AD:RO:QR:AO:QA	0/1:160.002:81:23,31:23:787:31:666	0/1:160.002:39:0,39:0:0:39:946:
     chr9	137688780	.	GCCTGTCCCCTCCAAAACCCA	G	.	.	ADP=69;WT=0;HET=2;HOM=0	GT:GQ:DP:RD:AD:FREQ:PVAL:RBQ:ABQ	0/1:41:80:67:13:16,25%:7,1891E-5:52:62	0/1:76:58:36:22:37,93%:2,025E-8:56:57
 
-To retrieve sequence attributes and genotype information for both ``Sample-01`` and ``Sample-02`` use iEVA as showed in previous examples:
+To retrieve sequence attributes and genotype information for both `Sample-01` and `Sample-02` use iEVA as showed in previous examples:
 
     $ iEVA -v -I merged-norm.vcf -O iEVA-merged.vcf -Ref ucsc.hg19.fasta -L Bamlist.txt -SR -SRL -RM -GC -WS 300 -AS -Unmap -SA -iDDup -MQ0 -iDP -iAD -iQR -iQA
 
@@ -595,10 +585,9 @@ As you can see, resulting file reports the input vcf file with iEVA attributes e
     chr3	12633424	.	A	AT	.	.	ADP=71;WT=0;HET=2;HOM=0;SR=2;SRL=16;RM=0;GC=41.196	GT:GQ:DP:RD:AD:FREQ:PVAL:RBQ:ABQ:UnMap:MQ0:SA:AS:iDDup:iDP:iAD:iQR:iQA	0/1:49:86:51:15:17,24%:1,2459E-5:44:45:0:0:0:133.871:0.0589:85:62,23:29.44:28.3	0/1:47:56:29:14:25%:1,727E-5:57:51:0:0:0:125.902:-0.0445:71:49,22:30.54:30.64
     chr9	137688780	.	GCCTGTCCCCTCCAAAACCCA	G	.	.	AC=3;AF=0.75;AN=4;DP=226;SR=0;SRL=.;RM=0;GC=61.794	GT:AD:DP:GQ:UnMap:MQ0:SA:AS:iDDup:iDP:iAD:iQR:iQA	0/1:37,47:84:99:0:0:0:126.602:-0.0447:53:22,31:30.89:30.5	1/1:2,39:41:78:0:0:0:123.053:.:39:0,39:.:31.46
 
-iEVA arguments
-==============
+# iEVA arguments
 
-A full list of iEVA tool arguments with a short description can be accessed by typing in your command line :class:`-h` [- -help] option:
+A full list of iEVA tool arguments with a short description can be accessed by typing in your command line `-h` [- -help] option:
 
     $ iEVA -h [--help]
 
@@ -754,407 +743,285 @@ A full list of iEVA tool arguments with a short description can be accessed by t
       -iCA, --ClippedReadsAlt
                             Fraction of clipped reads mapping ALT allele.
 
-Required arguments
-------------------
+## Required Arguments
 
-* **-I, --input**
+- **-I, --input**
+    - Path to input vcf file.
 
-    Path to input vcf file
+- **-Ref, --reference**
+    - Path to reference file in fasta format.
 
-* **-Ref, --reference**
+- **-O, --outfile**
+    - Path to output vcf file.
 
-    Path to reference file in fasta format
+- **-L, --list**
+    - **REQUIRED ONLY TO EXTRACT ATTRIBUTES FROM BAM FILE.**
+    - Path to Bam list file, one file for each row, as explained in the [Usage](#how_to) section.
+    - The sample name in the vcf *genotype* field must match the Read Group Sample Name `RG:SM` tag in the bam file header. A Bam Index file is required in the same path as the bam file.
 
-* **-O, --outfile**
+## Reference Extraction Arguments
 
-    Path to output vcf file
+Attributes extracted from the `reference.fasta` file will be reported in the vcf *INFO* column.
 
-* **-L, --list**
+### -SR, --SimpleRepeat
 
-    *REQUIRED ONLY TO EXTRACT ATTRIBUTES FROM BAM FILE.*
+Enable *Simple Repeat Finder*. The `-SR` option checks if a variant in the *POS* field of the input vcf file falls into a repeated sequence for a specific [window size](#WS).
 
-    |    Path to Bam list file, one file for each raw, as explained in :ref:`Usage<how_to>`.
-    |    Sample name in vcf *genotype* field has to be the same of Read Group Sample Name :class:`RG:SM` tag in bam file header. Bam Index file required in the same path of bam file.
+iEVA identifies two classes of repetitions:
 
-Reference extraction arguments
-------------------------------
+1. **Simple Repeat Sequence**: In -SR, we defined 3 simple rules, **BY DEFAULT**, to identify a tandem simple repeated sequence:
+   - *Number of repetitions* (N) >= 3. e.g., 3(CG) = CGCGCG.
+   - *Nucleotides composing repeating unit* (dY) = 2. For example, 3(ATT) is a SR sequence, while 3(AATC) is not, due to 3 different nucleotides composing the repeating unit.
+   - *Max length of repeating unit* (L) = 6. By default, the -SR option extracts only repeated sequences with L=6. For example, N(ATTAATT) is not considered a SR sequence.
 
-Attributes extracted from :file:`reference.fasta` file will be reported in vcf *INFO* column.
+   These default rules with the `-SR` option in iEVA are selected because these repeated sequences mostly influence base-calling and sequencing quality metrics [1]. However, for more complex repetitions (or implementing your own rules for repeated sequences), see the [SRList](#SRList) option.
 
-.. _SimpleRepeat:
+2. **Homopolymer Sequence**: Defined as:
+   - *Number of repetitions* (N) > 3.
+   - *Number of nucleotides composing single repeated sequence unit* (dY) = 1. e.g., 4(A).
 
--SR, --SimpleRepeat
-^^^^^^^^^^^^^^^^^^^
+   For example, `GAGAGAGA` is a Repeated Sequence of a `GA` dinucleotide with N = 4. `AAAAAAA` is an Homopolymer of `A` nucleotide with N = 7.
 
-Enable *Simple Repeat Finder*. :class:`-SR` option checks if a variant in *POS* field of input vcf file falls into a repeated sequence for a specific :ref:`window size <WS>`.
+> **Note:**
+>
+> The `-SR` argument has three output values: `SR=0` for None, `SR=1` for Repeated Sequence, and `SR=2` for Homopolymer Sequence.
+>
+> iEVA does not extract all repeated sequences in the window size but only verifies if a variant falls into it: only in this case, iEVA reports the repeated sequence class, otherwise SR=0.
+>
+> A complete list of Simple Repeat Sequences extracted by iEVA can be found in the iEVA package at `./iEVA/Supplementary/Simple-Repeated-Sequence-list.txt`.
 
-iEVA is able to identify two class of repetitions:
+### -SRList, --SimpleRepeatList
 
-1. **Simple Repeat Sequence**: in -SR we defined 3 simple rules, **BY DEFAULT**, in order to identify a tandem simple repeated sequence:
+Path to the list containing simple repeated sequences (one per line) to extract with iEVA. Enabling the `-SRList` command, you ask iEVA to check if a variant falls in a repeated sequence reported in the list, neglecting the previously explained rules for simple repeated sequences in the [SimpleRepeat](#SimpleRepeat) option.
 
-* *Number of repetitions* (N) >= 3.  *e.g* 3(CG) = CGCGCG
-
-* *Nucleotides composing repeating unit* (dY) = 2. For example, given a number of repetitions N=3, 3(ATT) is a SR sequence. 3(AATC), instead, is not a SR sequence because of 3 different nucleotides composing repeating unit.
-
-* *Max length of repeating unit* (L) = 6. By default, -SR option extracts only repeated sequences with L=6. For example, N(ATTAATT) is not considered a SR sequence
-
-We selected these rules by default with :class:`-SR` option in iEVA because these repeated sequences mostly influence base-calling and sequencing quality metrics [1]_. However, if you need to find more complex repetitions (or implementing your own rules for repeated sequences) look at :ref:`SRList` option.
-
-2. **Homopolymer Sequence**: it is defined as:
-
-* *Number of repetitions* (N) > 3
-
-* *Number of nucleotides composing single repeated sequence unit* (dY) = 1.  *e.g* 4(A)
-
-For example, `GAGAGAGA` is a Repeated Sequence of a `GA` dinucleotide with N = 4.
-Instead, `AAAAAAA` is an Homopolymer of `A` nucleotide with N = 7.
-
-.. note:
-    :class:`-SR` argument has three output values: :class:`SR=0` for None, :class:`SR=1` for Repeated Sequence and :class:`SR=2` for Homopolymer Sequence.
-
-    iEVA does not extract all repeated sequence in window size but only verify if a variant falls into it: only in this case, iEVA report repeated sequence class, otherwise SR=0.
-
-    A complete list of Simple Repeat Sequence extracted by iEVA can be found in iEVA package at :file:`./iEVA/Supplementary/Simple-Repeated-Sequence-list.txt`
-
--SRList, --SimpleRepeatList
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Path to list containing simple repeated sequence (one for each raw) to extract with iEVA. Enabling :class:`-SRList` command, you ask to iEVA to check if a variant falls in a repeated sequence reported in list, neglecting previously explained rules for simple repeated sequences in :ref:`SimpleRepeat` option.
-
-User can choose to find any type of repeated sequence only if provides single repeating unit in file. Compared to :ref:`SimpleRepeat` option, you can define your own rules, using also sequences composed by more than two nucleotides (dY >= 2) and with a max length of repeating unit greater than 6 (L >= 6). For example, try to create a :file:`RepSeq.txt` file as follow:
+Users can choose to find any type of repeated sequence only if they provide a single repeating unit in the file. Compared to the [SimpleRepeat](#SimpleRepeat) option, you can define your own rules, using also sequences composed of more than two nucleotides (dY >= 2) and with a max length of repeating unit greater than 6 (L >= 6). For example, create a `RepSeq.txt` file as follows:
 
     CTT
     ACG
     ACCTG
 
-In this case, iEVA finds all repeated sequences with number of repetitions > 3 like *CTTCTTCTTCTTCTT*, *ACGACGACGACG* or *ACCTGACCTGACCTG* 
+In this case, iEVA finds all repeated sequences with the number of repetitions > 3 like *CTTCTTCTTCTTCTT*, *ACGACGACGACG* or *ACCTGACCTGACCTG*.
 
-.. warning:
-    Using :class:`-SRList` command iEVA will not extract the default repetitions reported in :file:`./iEVA/Supplementary/Simple-Repeated-Sequence-list.txt` file but only those given in file list. However, iEVA always finds homopolymer sequences.
-    If you want to extract also default repetitions, you can add your repeating unit of interest in that file and use it to extract all requested repeated sequences.
+> **Warning:**
+> 
+> Using the `-SRList` command, iEVA will not extract the default repetitions reported in the `./iEVA/Supplementary/Simple-Repeated-Sequence-list.txt` file but only those given in the file list. However, iEVA always finds homopolymer sequences.
+> If you want to extract also the default repetitions, you can add your repeating unit of interest in that file and use it to extract all requested repeated sequences.
 
+### -SRL, --SimpleRepeatLength
 
--SRL, --SimpleRepeatLength
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Total length, as a number of nucleotides, of the repeated sequence in the `-SR` option in which the variant falls.
 
-Total length, as number of nucleotides, of repeated sequence in :class:`SR` option in which variant falls.
+> **Note:**
+> `GAGAGAGA`, for example, has `SRL=8`.
 
-.. note:
-    `GAGAGAGA`, for example, has :class:`SRL=8`.
+### -SRU, --SimpleRepeatUnit
 
+Report the simple repeat unit composing the simple repeated sequence. For example, `ATTATTATT` has a simple repeat unit `SRU=ATT`.
 
--SRU, --SimpleRepeatUnit
-^^^^^^^^^^^^^^^^^^^^^^^^
+### -PNC, --PseudoNucleotidesComposition
 
-Report simple repeat unit composing simple repeated sequence. For axample, `ATTATTATT` has a saimple repeat unit :class:`SRU=ATT`.
-
-
--PNC, --PseudoNucleotidesComposition
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-In order to achieve an accurate description of a sequence around a variant in vcf input file, we implemented in iEVA a *Pseudo nucleotide composition or PseKNC* for a specific :ref:`window size <WS>`.
+To achieve an accurate description of a sequence around a variant in the vcf input file, we implemented a *Pseudo nucleotide composition or PseKNC* for a specific [window size](#WS).
 
 PseKNC allows to enclose nucleotide sequence composition using a number of attributes depending on kmer size.
-In iEVA we choosed a dinucleotide profile (kmer size of 2), resulting in 16 attributes: *AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT*. Each dinucleotide combination is represented by a float number.
+In iEVA, we chose a dinucleotide profile (kmer size of 2), resulting in 16 attributes: *AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT*. Each dinucleotide combination is represented by a float number.
 
-.. seealso:
-    Further details about Pseudo nucleotide composition at [2]_.
+> **See Also:**
+> Further details about Pseudo nucleotide composition can be found [here](#2).
 
-.. note:
-    :class:`-PNC` is reported in vcf as a list of 16 values: :class:`PNC=AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT`.
+> **Note:**
+> `-PNC` is reported in the vcf as a list of 16 values: `PNC=AA,AC,AG,AT,CA,CC,CG,CT,GA,GC,GG,GT,TA,TC,TG,TT`.
 
+### -RM, --RepeatMasker
 
--RM, --RepeatMasker
-^^^^^^^^^^^^^^^^^^^
+Check if the variant falls in a lower case sequence in the `reference.fasta` file for a specific [window size](#WS).
 
-Check if variant falls in a lower case sequence on :file:`reference.fasta` file for a specific :ref:`window size <WS>`.
+Sequence in lower case is used for sequences identified by [RepeatMasker](http://www.repeatmasker.org/) as low-complexity or repetitive elements as reported in [Fasta format specification](https://www.ncbi.nlm.nih.gov/projects/SNP/snp_legend.cgi?legend=fasta).
 
-Sequence in lower case is used for sequences identified by `RepeatMasker <http://www.repeatmasker.org/>`_ as low-complexity or repetitive elements as reported in `Fasta format specification <https://www.ncbi.nlm.nih.gov/projects/SNP/snp_legend.cgi?legend=fasta>`_
+> **Note:**
+> `-RM` argument has two possible values: `RM=0` if the fasta sequence is upper case, `RM=1` if the fasta sequence is lower case.
 
-.. note:
-    :class:`-RM` argument has two possible values. :class:`RM=0` if fasta sequence is upper case, :class:`RM=1` if fasta sequence is lower case.
+### -GC, --gcContent
 
+GC content of a sequence for a specific [window size](#WS).
 
--GC, --gcContent
-^^^^^^^^^^^^^^^^
+### -VC, --VariantClass
 
-GC content of a sequence for a specific `window size <WS>`_.
+Verify if the variant class is *SNV*, *Insertion*, or *Deletion*. Other variant classes (*e.g.,* InDel) are reported as *Sequence Alteration*.
 
+> **Note:**
+> `-VC` argument has 4 possible values: `VC=snv` for *SNV*, `VC=Ins` for *Insertion*, `VC=Del` for *Deletion*, and `VC=Alt` for *Sequence Alteration*.
 
--VC, --VariantClass
-^^^^^^^^^^^^^^^^^^^
+### -WS, --WindowSize
 
-Verify if variant class is *SNV*, *Insertion* or *Deletion*. Other variant classes (*e.g* InDel) are reported as *Sequence Alteration*.
+Set the window size for [SimpleRepeat](#SimpleRepeat) and [SRList](#SRList), [gcContent](#gcContent), and [PseudoNucleotidesComposition](#PseudoNucleotidesComposition) arguments. *WS=[20-600]*, *Default=40*
 
-.. note:
-    :class:`-VC` argument has 4 possible values. :class:`VC=snv` for *SNV*, :class:`VC=Ins` for *Insertion*, :class:`VC=Del` for *Deletion* and :class:`VC=Alt` for *Sequence Alteration*
+## Bam Extraction Arguments
 
+These arguments extract various information about reads mapping the sample variant position. Attributes are extracted from the flag field in the `.bam` file and will be annotated in the vcf genotype field for the bam reported in the [Required](#Required) option.
 
--WS, --WindowSize
-^^^^^^^^^^^^^^^^^
+> **See Also:**
+> Look at [bam specifications](https://samtools.github.io/hts-specs/SAMv1.pdf) for details about the bam format.
 
-Set window size for :ref:`-SR <SimpleRepeat>` and :ref:`-SRList <SRList>`, :ref:`-GC <gcContent>` and :ref:`-PNC <PseudoNucleotidesComposition>` arguments. *WS=[20-600]*, *Default=40*
-
-
-Bam extraction arguments
-------------------------
-
-These arguments extract several information about reads mapping sample variant position. Attributes are extracted from flag field in :file:`.bam` file and will be annotated in vcf genotype field for bam reported in :ref:`-L <Required>` option.
-
-.. seealso:
-    Look at `bam specifications <https://samtools.github.io/hts-specs/SAMv1.pdf>`_ for details about bam format.
-
-
--SBR, --StrandBiasReads
-^^^^^^^^^^^^^^^^^^^^^^^
+### -SBR, --StrandBiasReads
 
 Fisher's exact test based on read orientation (R1+,R1-,R2+,R2-) to detect strand bias. Only for paired-end sequencing experiments.
 This option excludes reads flagged as duplicates and unmapped.
 
-
--UnMap, --UnMappedReads
-^^^^^^^^^^^^^^^^^^^^^^^
+### -UnMap, --UnMappedReads
 
 Fraction of *unmapped reads* for a variant position.
 
+### -MMQ, --MeanMappingQuality
 
--MMQ, --MeanMappingQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Mean mapping quality for reads mapping the variant position.
 
-Mean mapping quality for reads mapping variant position.
+### -MQ0, --MappingQualityZero
 
+Fraction of reads mapping the variant position with Mapping Quality *MQ=0*.
 
--MQ0, --MappingQualityZero
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### -NPA, --NotPrimaryAlignment
 
-Fraction of reads mapping variant position with Mapping Quaility *MQ=0*.
+Fraction of reads mapping the variant position and flagged as *not primary alignment*.
 
+### -SA, --SupplementaryAlignment
 
--NPA, --NotPrimaryAlignment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Fraction of reads mapping the variant position and flagged as *supplementary alignment*.
 
-Fraction of reads mapping variant position and flagged as *not primary alignment*.
+### -NP, --NotPairedReads
 
+Fraction of reads mapping the variant position and flagged as *not paired*.
 
--SA, --SupplementaryAlignment
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### -NPP, --NotProperPairedReads
 
-Fraction of reads mapping variant position and flagged as *supplementary alignment*.
+Fraction of reads mapping the variant position and flagged as *not proper paired*.
 
+### -AS, --AlignmentScore
 
--NP, --NotPairedReads
-^^^^^^^^^^^^^^^^^^^^^
+Mean *Alignment Score* for reads mapping the variant position. Tested on bam obtained with [BWA](http://bio-bwa.sourceforge.net/).
 
-Fraction of reads mapping variant position and flagged as *not paired*.
+### -TDR, --TotalDupReads
 
+Fraction of total reads mapping the variant position and marked as *duplicate*.
 
--NPP, --NotProperPairedReads
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+## Genotype Extraction Arguments
 
-Fraction of reads mapping variant position and flagged as *not proper paired*.
+Genotype extraction arguments allow for extracting information about the sample genotype analyzing `.bam` file. Most of the command line options in this section start with `-i` because they are computed by iEVA and are affected by `-SNVmbq`, `-SNVmmq`, `-INDELmbq`, and `-INDELmmq` arguments. They set SNV/InDels mapping quality and base quality threshold for all reads supporting the variant position. All reads below the threshold are filtered.
 
+### -TDP, --TotalDPUnfilter
 
--AS, --AlignmentScore
-^^^^^^^^^^^^^^^^^^^^^
+Total read depth for a variant position. No filter applied, including duplicate reads. Look at `-iDP` option for filtered read depth.
 
-Mean *Alignment Score* for reads mapping variant position. Tested on bam obtained with `BWA <http://bio-bwa.sourceforge.net/>`_
+### -SNVmbq, --SNVMinBaseQuality
 
+Minimum base quality threshold for base supporting *SNV* position. *SNVmbq=[0-66]*, *Default=12*
 
--TDR, --TotalDupReads
-^^^^^^^^^^^^^^^^^^^^^
+### -SNVmmq, --SNVMinMappingQuality
 
-Fraction of total reads mapping variant position and marked as *duplicate*.
+Minimum mapping quality threshold for reads supporting *SNV*. *SNVmmq=[0-60]*, *Default=30*
 
+### -INDELmbq, --IndelMinBaseQuality
 
-Genotype extraction arguments
------------------------------
+Minimum base quality threshold for base supporting *Insertions* and *Deletions*. *INDELmbq=[0-66]*, *Default=10*
 
-Genotype extraction arguments allow to extract information about sample genotype analyzing :file:`.bam` file.
-Most of the command line options in this section start with ``-i`` because are computed by iEVA and are affected by :ref:`-SNVmbq <SNVmbq>`, :ref:`-SNVmmq <SNVmmq>`, :ref:`-INDELmbq <INDELmbq>` and :ref:`-INDELmmq <INDELmmq>` arguments. They set SNV/InDels mapping quality and base quality threshold for all reads supporting variant position. All reads below threshold are filtered.
+### -INDELmmq, --IndelMinMappingQuality
 
+Minimum mapping quality threshold for reads supporting *Insertions* and *Deletions*. *INDELmmq=[0-60]*, *Default=20*
 
--TDP, --TotalDPUnfilter
-^^^^^^^^^^^^^^^^^^^^^^^
+### -iNDR, --NumberReadDupRef
 
-Total read depth for a variant position. No filter applied, including duplicate reads. Look at :class:`-iDP` option for filtered read depth.
+Number of reads mapping the variant position and marked as duplicate on REF allele in the vcf *REF* column.
 
+### -iNDA, --NumberReadDupAlt
 
--SNVmbq, --SNVMinBaseQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Number of reads mapping the variant position and marked as duplicate on ALT allele in the vcf *ALT* column.
 
-Minimum base quality threshold for base supporting *SNV* position.
+### -iDR, --DuplicateReference
 
-*SNVmbq=[0-66]*, *Default=12*
+Fraction of reads mapping the variant position and marked as duplicate on REF allele in the vcf *REF* column.
 
+### -iDA, --DuplicateAlternate
 
--SNVmmq, --SNVMinMappingQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Fraction of reads mapping the variant position and marked as duplicate on ALT allele in the vcf *ALT* column.
 
-Minimum mapping quality threshold for reads supporting *SNV*.
+### -iDDup, --DeltaDuplicate
 
-*SNVmmq=[0-60]*, *Default=30*
+Difference between the fraction of duplicate reads for REF and ALT alleles (%REF - %ALT). A negative value shows preference in duplicate for REF allele, positive for ALT.
 
+### -iDP, --iEvaDepth
 
--INDELmbq, --IndelMinBaseQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+iEva read depth for the variant position counted as reads supporting *REF* allele + *ALT* allele. Only reads flagged as *proper paired*, *proper mapped*, and *not duplicate* are used to extract `iDP`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
-Minimum base quality threshold for base supporting *Insertions* and *Deletions*.
+### -iAD, --iAlleleDepth
 
-*INDELmbq=[0-66]*, *Default=10*
+iEVA allele depth as the number of reads supporting *REF* and *ALT* alleles reported as `iAD=iRR,iRA`
 
+### -iRR, --ReadRef
 
--INDELmmq, --IndelMinMappingQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Number of reads supporting *REF* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
-Minimum mapping quality threshold for reads supporting *Insertions* and *Deletions*.
+### -iRA, --ReadAlt
 
-*INDELmmq=[0-60]*, *Default=20*
+Number of reads supporting *ALT* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
+### -iQR, --MeanRefQscore
 
--iNDR, --NumberReadDupRef
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Mean Q-score for base supporting *REF* allele. iEVA extracts `iQR` for reads supporting the REF allele depending on the `Variant Class` attribute as follows:
 
-Number of reads mapping variant position and marked as duplicate on REF allele in vcf *REF* column.
+- **SNV**: Mean Q-score for all bases supporting REF allele.
+- **Insertion**: Mean Q-score for all inserted bases supporting REF allele.
+- **Deletion**: Mean Q-score for the base before and after deletion.
 
+### -iQA, --MeanAltQscore
 
--iNDA, --NumberReadDupAlt
-^^^^^^^^^^^^^^^^^^^^^^^^^
+Mean Q-score for base supporting *ALT* allele. iEVA extracts `QA` for reads supporting the ALT allele depending on the `Variant Class` attribute as follows:
 
-Number of reads mapping variant position and marked as duplicate on ALT allele in vcf *ALT* column.
+- **SNV**: Mean Q-score for all bases supporting ALT allele.
+- **Insertion**: Mean Q-score for all inserted bases supporting ALT allele.
+- **Deletion**: Mean Q-score for the base before and after deletion.
 
+### -iRMQ, --RefMeanMappingQuality
 
--iDR, --DuplicateReference
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+Mean mapping quality for reads supporting *REF* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
-Fraction of reads mapping variant position and marked as duplicate on REF allele in vcf *REF* column.
+### -iAMQ, --AltMeanMappingQuality
 
+Mean mapping quality for reads supporting *ALT* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
--iDA, --DuplicateAlternate
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### -iCR, --ClippedReadsRef
 
-Fraction of reads mapping variant position and marked as duplicate on ALT allele in vcf *ALT* column.
+Fraction of clipped reads mapping *REF* allele in `iRR`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
+### -iCA, --ClippedReadsAlt
 
--iDDup, --DeltaDuplicate
-^^^^^^^^^^^^^^^^^^^^^^^^
+Fraction of clipped reads mapping *ALT* allele in `iRA`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
-Difference between fraction of duplicate reads for REF and ALT alleles (%REF - %ALT). A negative value shows preference in duplicate for REF allele, positive for ALT.
+### -iNCR, --NumberClippedReadsRef
 
+Number of clipped reads mapping *REF* allele in `iRR`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
--iDP, --iEvaDepth
-^^^^^^^^^^^^^^^^^
+### -iNCA, --NumberClippedReadsAlt
 
-iEva read depth for variant position counted as reads supporting *REF* allele + *ALT* allele. Only reads flagged as *proper paired*, *proper mapped* and *not duplicate* are used to extract :class:`iDP`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
+Number of clipped reads mapping *ALT* allele in `iRA`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment*, or marked as *duplicate*.
 
+## References
 
--iAD, --iAlleleDepth
-^^^^^^^^^^^^^^^^^^^^
+1. Kieleczawa J. Fundamentals of Sequencing of Difficult Templates—An Overview. Journal of Biomolecular Techniques : JBT. 2006;17(3):207-217. [PubMed PMID: 16870712](https://www.ncbi.nlm.nih.gov/pubmed/16870712).
 
-iEVA allele depth as number of reads supporting *REF* and *ALT* allele reported as :class:`iAD=iRR,iRA`
+2. Chen W, Lin H, Chou KC. Pseudo nucleotide composition or PseKNC: an effective formulation for analyzing genomic sequences. Mol Biosyst. 2015 Oct;11(10):2620-34. [PubMed PMID: 26099739](https://www.ncbi.nlm.nih.gov/pubmed/26099739).
 
+# FAQ
 
--iRR, --ReadRef
-^^^^^^^^^^^^^^^
+### Could iEVA be considered a variant caller?
 
-Number of reads supporting *REF* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
+iEVA is not a variant caller because it does not include any genotyping algorithm. It simply needs as input a vcf file from variant calling and generates as output a new vcf file enriched with all extracted information.
 
+### How does iEVA extract genotype information?
 
--iRA, --ReadAlt
-^^^^^^^^^^^^^^^
+iEVA extracts genotype attributes like [iDP](#DP) or [iAD](#AD) by simply taking into account information about the variant position, *REF*, and *ALT* fields from the vcf input file. After that, iEVA iterates over all reads mapping the variant position in the bam file, looking for reads carrying the REF or ALT allele.
 
-Number of reads supporting *ALT* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
+### Can I use any bam file or reference fasta file with iEVA?
 
+Yes. You can use any bam or reference fasta file used in the variant calling analysis.
 
--iQR, --MeanRefQscore
-^^^^^^^^^^^^^^^^^^^^^
-
-Mean Q-score for base supporting *REF* allele. iEVA extracts :class:`iQR` for reads supporting ref allele depending on :ref:`Variant Class <VC>` attribute as follow:
-
-* **SNV**: Mean Q-score for all bases supporting REF allele
-
-* **Insertion**: Mean Q-score for all inserted bases supporting REF allele
-
-* **Deletion**: Mean Q-score for the base before and after deletion.
-
-
--iQA, --MeanAltQscore
-^^^^^^^^^^^^^^^^^^^^^
-
-Mean Q-score for base supporting *ALT* allele. iEVA extracts :class:`QA` for reads supporting alt allele depending on :ref:`Variant Class <VC>` attribute as follow:
-
-* **SNV**: Mean Q-score for all bases supporting ALT allele
-
-* **Insertion**: Mean Q-score for all inserted bases supporting ALT allele
-
-* **Deletion**: Mean Q-score for the base before and after deletion.
-
-
--iRMQ, --RefMeanMappingQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Mean mapping quality for reads supporting *REF* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
-
-
--iAMQ, --AltMeanMappingQuality
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Mean mapping quality for reads supporting *ALT* allele. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
-
-
--iCR, --ClippedReadsRef
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Fraction of clipped reads mapping *REF* allele in :ref:`-iRR <RR>`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
-
-
--iCA, --ClippedReadsAlt
-^^^^^^^^^^^^^^^^^^^^^^^
-
-Fraction of clipped reads mapping *ALT* allele in :ref:`-iRA <RA>`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
-
-
--iNCR, --NumberClippedReadsRef
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Number of clipped reads mapping *REF* allele in :ref:`-iRR <RR>`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
-
-
--iNCA, --NumberClippedReadsAlt
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Number of clipped reads mapping *ALT* allele in :ref:`-iRA <RA>`. iEVA filters all reads flagged as *unmapped*, *secondary alignment*, *supplementary alignment* or marked as *duplicate*.
-
-
-References
-----------
-
-.. [1] Kieleczawa J. Fundamentals of Sequencing of Difficult Templates—An Overview. Journal of Biomolecular Techniques : JBT. 2006;17(3):207-217. `PubMed PMID: 16870712 <https://www.ncbi.nlm.nih.gov/pubmed/16870712>`_
-
-
-.. [2] Chen W, Lin H, Chou KC. Pseudo nucleotide composition or PseKNC: an effective formulation for analyzing genomic sequences. Mol Biosyst. 2015 Oct;11(10):2620-34. `PubMed PMID: 19505943 <https://www.ncbi.nlm.nih.gov/pubmed/26099739>`_
-
-
-FAQ
-===
-
-
-Could iEVA be considered a variant caller?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-iEVA is not a variant caller because iEVA does not include any genotyping algorithm. It simply needs as input a vcf file from variant calling and generates as output a new vcf file enriched with all extracted information.
-
-
-How iEVA extracts genotype informations?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-iEVA extracts genotype attributes like :ref:`-iDP <DP>` or :ref:`-iAD <AD>` by simply taking into account information about variant position, *REF* and *ALT* field for vcf input file. After that, iEVA iterates all reads mapping variant position in bam file, looking for reads carrying REF or ALT allele.
-
-
-Can I use any bam file or reference fasta file with iEVA?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Yes. You can use any bam or reference fasta file used in variant calling analysis.
-
-However, consider that some information can be extracted only if you made the respective analysis on bam file. For example, you cannot extract information about fraction of duplicate reads without marking duplicate step on bam file. In this case, not extracted options will be reported with missing value `'.'` in output vcf file.
+However, consider that some information can only be extracted if you made the respective analysis on the bam file. For example, you cannot extract information about the fraction of duplicate reads without a marking duplicate step on the bam file. In this case, not extracted options will be reported with a missing value `'.'` in the output vcf file.
 In addition, bam analysis depends on pysam requirements.
-
