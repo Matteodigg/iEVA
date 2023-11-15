@@ -9,6 +9,7 @@ It is a good practice in DNAseq bioinformatics pipelines to include multiple var
 Existing tools such as bcftools or GATK CombineVariants can merge multiple vcf files but only the annotation from one of them will be reported in the final merged file. Moreover, bioinformaticians and data scientists might be interested in getting additional information for each variant in the vcf files from different sources. For example, one might be interested in getting the GC content around the variant or the sequence conservation score. This information can only be obtained by parsing different datasets and the reference fasta file with the input vcf files and, eventually, the BAM file of the sample used to generate the vcf.
 
 > **Solution**
+
 iEVA is a python based command line tool that enables users to:
 
 1. Merge multiple VCF files from different variant callers on both single- and multi-sample level.
